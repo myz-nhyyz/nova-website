@@ -5,15 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#07070c">
 <title>Điều khoản dịch vụ — Nova</title>
-<meta name="description" content="Nova là Discord bot đa năng hỗ trợ AI, moderation, War, Backup, Event và nhiều công cụ quản lý cộng đồng.">
+<meta name="description" content="Các quy định khi sử dụng Nova.">
+<link rel="icon" type="image/png" href="./assets/favicon.png">
 <meta property="og:title" content="Điều khoản dịch vụ — Nova">
 <meta property="og:description" content="Các quy định khi sử dụng Nova.">
-<meta property="og:image" content="assets/avatar.png">
+<meta property="og:image" content="./assets/avatar.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="./style.css">
 </head>
 <body data-page="terms">
 
@@ -30,11 +31,17 @@
     <span class="nav-orb">◉</span>
     <span>Nova</span>
   </a>
-  <div class="nav-links">
+  <div class="nav-links" id="navLinks">
     <a href="./index.html" data-i18n="nav.home">Trang chủ</a>
     <a href="./index.html#features" data-i18n="nav.features">Tính năng</a>
-    <a href="./privacy-policy.html" data-i18n="nav.privacy">Chính sách bảo mật</a>
-    <a href="./terms-of-service.html" class="active" data-i18n="nav.terms">Điều khoản dịch vụ</a>
+    <a href="./index.html#commands" data-i18n="nav.commands">Lệnh</a>
+    <a href="./index.html#features" data-cat="ai" data-i18n="nav.ai">AI</a>
+    <a href="./index.html#features" data-cat="moderation" data-i18n="nav.moderation">Moderation</a>
+    <a href="./index.html#features" data-cat="war" data-i18n="nav.war">War</a>
+    <a href="./index.html#features" data-cat="event" data-i18n="nav.event">Event</a>
+    <a href="./index.html#help" data-i18n="nav.help">Trợ giúp</a>
+    <a href="./privacy-policy.html" data-i18n="nav.privacy">Bảo mật</a>
+    <a href="./terms-of-service.html" class="active" data-i18n="nav.terms">Điều khoản</a>
   </div>
   <div class="nav-right">
     <div class="lang" role="tablist" aria-label="Language">
@@ -48,9 +55,9 @@
     </div>
     <a href="#" data-invite class="invite-btn" target="_blank" rel="noopener noreferrer">
       <span data-i18n="nav.invite">Mời Nova</span>
-      <span>→</span>
+      <span aria-hidden="true">→</span>
     </a>
-    <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <line x1="4" y1="7" x2="20" y2="7"/>
         <line x1="4" y1="12" x2="20" y2="12"/>
@@ -60,22 +67,24 @@
   </div>
 </nav>
 
-<div class="mobile-menu glass" role="menu">
+<div class="mobile-menu glass" id="mobileMenu" role="menu">
   <a href="./index.html" data-i18n="nav.home">Trang chủ</a>
   <a href="./index.html#features" data-i18n="nav.features">Tính năng</a>
-  <a href="./privacy-policy.html" data-i18n="nav.privacy">Chính sách bảo mật</a>
-  <a href="./terms-of-service.html" data-i18n="nav.terms">Điều khoản dịch vụ</a>
+  <a href="./index.html#commands" data-i18n="nav.commands">Lệnh</a>
+  <a href="./index.html#help" data-i18n="nav.help">Trợ giúp</a>
+  <a href="./privacy-policy.html" data-i18n="nav.privacy">Bảo mật</a>
+  <a href="./terms-of-service.html" data-i18n="nav.terms">Điều khoản</a>
   <a href="#" data-invite class="invite-btn" target="_blank" rel="noopener noreferrer">
     <span data-i18n="nav.invite">Mời Nova</span>
-    <span>→</span>
+    <span aria-hidden="true">→</span>
   </a>
 </div>
 
 <main class="legal-wrap">
   <div class="legal-head">
     <span class="legal-badge">Terms of Service</span>
-    <h1 class="reveal" data-i18n-html="legal.terms.title">Điều khoản <em>dịch vụ</em></h1>
-    <p class="section-sub reveal" data-i18n="legal.terms.sub">Các quy định khi sử dụng Nova.</p>
+    <h1 class="reveal" data-i18n-html="tos.title">Điều khoản <em>dịch vụ</em></h1>
+    <p class="section-sub reveal" data-i18n="tos.sub">Các quy định khi sử dụng Nova.</p>
     <div class="meta reveal" style="margin-top:20px;">
       <span data-i18n="meta.effective">Ngày hiệu lực</span>
       <strong>19/09/2026</strong>
@@ -83,116 +92,118 @@
   </div>
 
   <section class="legal-section glass reveal">
-    <h2><span class="n">01</span><span>Giới thiệu</span></h2>
-    <p>Nova là Discord bot cung cấp AI Chatbot, AI Image, War Ping / Backup Ping, Event, Ban Zone và các công cụ moderation. Nova được vận hành bởi <strong>nova_.inovation</strong>.</p>
-    <p><strong>Nova là Discord bot bên thứ ba và không phải sản phẩm chính thức của Discord.</strong> Nova không được Discord chứng nhận, tài trợ hay liên kết chính thức.</p>
+    <h2><span class="n">01</span><span data-i18n="tos.s01t">Giới thiệu</span></h2>
+    <div data-i18n-html="tos.s01">
+      <p>Nova là Discord bot cung cấp AI Chatbot, AI Image, War Ping / Backup Ping, Event, Ban Zone và các công cụ moderation. Nova được vận hành bởi <strong>nova_.inovation</strong>.</p>
+      <p><strong>Nova là Discord bot bên thứ ba và không phải sản phẩm chính thức của Discord.</strong> Nova không được Discord chứng nhận, tài trợ hay liên kết chính thức.</p>
+    </div>
   </section>
 
   <section class="legal-section glass reveal">
-    <h2><span class="n">02</span><span>Chấp nhận điều khoản</span></h2>
-    <p>Bằng việc mời Nova vào server hoặc sử dụng bất kỳ tính năng nào của Nova, bạn đồng ý với các Điều khoản Dịch vụ này. Nếu bạn không đồng ý, vui lòng không sử dụng Nova.</p>
+    <h2><span class="n">02</span><span data-i18n="tos.s02t">Chấp nhận điều khoản</span></h2>
+    <div data-i18n-html="tos.s02">
+      <p>Bằng việc mời Nova vào server hoặc sử dụng bất kỳ tính năng nào của Nova, bạn đồng ý với các Điều khoản Dịch vụ này. Nếu bạn không đồng ý, vui lòng không sử dụng Nova.</p>
+    </div>
   </section>
 
   <section class="legal-section glass reveal">
-    <h2><span class="n">03</span><span>Sử dụng Nova</span></h2>
-    <p>Bạn chỉ được sử dụng Nova khi tuân thủ Điều khoản Dịch vụ và Nguyên tắc Cộng đồng của Discord, và pháp luật áp dụng tại khu vực của bạn.</p>
-    <p>Nova được cung cấp miễn phí. Chủ bot có thể thay đổi, tạm ngưng hoặc chấm dứt bất kỳ tính năng nào vào bất kỳ lúc nào.</p>
+    <h2><span class="n">03</span><span data-i18n="tos.s03t">Sử dụng hợp lệ</span></h2>
+    <div data-i18n-html="tos.s03">
+      <p>Bạn chỉ được sử dụng Nova khi tuân thủ Điều khoản Dịch vụ và Nguyên tắc Cộng đồng của Discord, cùng pháp luật áp dụng tại khu vực của bạn.</p>
+      <p>Nova được cung cấp miễn phí. Chủ bot có thể thay đổi, tạm ngưng hoặc chấm dứt bất kỳ tính năng nào vào bất kỳ lúc nào.</p>
+    </div>
   </section>
 
   <section class="legal-section glass reveal">
-    <h2><span class="n">04</span><span>Trách nhiệm người dùng</span></h2>
-    <p>Bạn đồng ý không sử dụng Nova để:</p>
-    <ul>
-      <li>Quấy rối, đe dọa hoặc lạm dụng người dùng khác.</li>
-      <li>Tham gia hoặc hỗ trợ hoạt động bất hợp pháp.</li>
-      <li>Spam lệnh, kênh hoặc người dùng khác.</li>
-      <li>Khai thác, làm sập hoặc dịch ngược bot.</li>
-      <li>Vượt qua hệ thống phân quyền, role hierarchy hoặc whitelist.</li>
-      <li>Lạm dụng công cụ moderation (Ban Zone, ban, mute) với người không vi phạm.</li>
-    </ul>
+    <h2><span class="n">04</span><span data-i18n="tos.s04t">Hành vi bị cấm</span></h2>
+    <div data-i18n-html="tos.s04">
+      <p>Bạn đồng ý không sử dụng Nova để:</p>
+      <ul>
+        <li>Quấy rối, đe dọa hoặc lạm dụng người dùng khác.</li>
+        <li>Tham gia hoặc hỗ trợ hoạt động bất hợp pháp.</li>
+        <li>Spam lệnh, kênh hoặc người dùng khác.</li>
+        <li>Khai thác, làm sập hoặc dịch ngược bot.</li>
+        <li>Vượt qua hệ thống phân quyền, role hierarchy hoặc whitelist.</li>
+        <li>Lạm dụng công cụ moderation (Ban Zone, ban, mute) với người không vi phạm.</li>
+      </ul>
+    </div>
   </section>
 
   <section class="legal-section glass reveal">
-    <h2><span class="n">05</span><span>Server administrators</span></h2>
-    <p>Quản trị viên server có trách nhiệm:</p>
-    <ul>
-      <li>Cấu hình Nova phù hợp với quy định của server mình.</li>
-      <li>Ghi nhãn rõ ràng cho kênh Ban Zone và các kênh có tính năng tự động.</li>
-      <li>Đảm bảo bot có đủ quyền và role phù hợp để vận hành.</li>
-      <li>Sử dụng các công cụ moderation đúng mục đích, không lạm dụng.</li>
-    </ul>
+    <h2><span class="n">05</span><span data-i18n="tos.s05t">Yêu cầu quyền Discord</span></h2>
+    <div data-i18n-html="tos.s05">
+      <p>Nhiều tính năng của Nova yêu cầu quyền Discord tương ứng mới hoạt động được:</p>
+      <ul>
+        <li>Các lệnh moderation (<code>/ban</code>, <code>/unban</code>, <code>/mute</code>, <code>/unmute</code>) yêu cầu quyền phù hợp và Nova cần role cao hơn người bị tác động.</li>
+        <li>Nova không thể xử lý Server Owner hoặc role cao hơn bot.</li>
+        <li>Cấu hình server yêu cầu quyền quản lý server.</li>
+        <li>Quản lý whitelist Ban Zone chỉ dành cho Server Owner.</li>
+      </ul>
+    </div>
   </section>
 
   <section class="legal-section glass reveal">
-    <h2><span class="n">06</span><span>Moderation</span></h2>
-    <p>Nova cung cấp các công cụ moderation như <code>/ban</code>, <code>/unban</code>, <code>/mute</code>, <code>/unmute</code>. Các lệnh này yêu cầu quyền Discord tương ứng và Nova cần role cao hơn người bị tác động mới thực hiện được. Nova không thể xử lý Server Owner.</p>
+    <h2><span class="n">06</span><span data-i18n="tos.s06t">Giới hạn tính năng AI</span></h2>
+    <div data-i18n-html="tos.s06">
+      <p>Phản hồi AI (text hoặc ảnh) có thể không chính xác, không đầy đủ hoặc lỗi thời. Không coi kết quả AI như sự thật, lời khuyên chuyên môn, y tế, pháp lý hay tài chính.</p>
+      <p>Nova không đảm bảo AI luôn trả lời đúng, phù hợp hoặc không chứa nội dung gây hại. AI được hỗ trợ bởi <strong>Qwen3.7-max</strong> và có thể có hệ thống dự phòng khi dịch vụ chính không khả dụng.</p>
+    </div>
   </section>
 
   <section class="legal-section glass reveal">
-    <h2><span class="n">07</span><span>Ban Zone</span></h2>
-    <p>Server Owner có thể cấu hình Ban Zone cho server của mình thông qua <code>/setbanchannel</code> và <code>/banzone</code>. Cấu hình Ban Zone được lưu riêng theo từng server.</p>
-    <ul>
-      <li>Mode <strong>ban</strong>: người gửi tin vào Ban Zone có thể bị ban tự động.</li>
-      <li>Mode <strong>mute</strong>: người gửi tin vào Ban Zone có thể bị timeout theo duration đã cài (tối đa 28 ngày).</li>
-      <li>Whitelist quản lý qua <code>/banwhitelist</code>.</li>
-    </ul>
-    <p>Nova không cam kết chống raid tuyệt đối hoặc xử lý mọi trường hợp vi phạm.</p>
+    <h2><span class="n">07</span><span data-i18n="tos.s07t">Giới hạn tính năng moderation</span></h2>
+    <div data-i18n-html="tos.s07">
+      <p>Ban Zone và các công cụ moderation là công cụ hỗ trợ, không thay thế hoàn toàn việc quản trị server.</p>
+      <ul>
+        <li>Nova không cam kết chống raid tuyệt đối hoặc xử lý mọi trường hợp vi phạm.</li>
+        <li>Hành động tự động phụ thuộc vào cấu hình server, quyền hạn và role hierarchy.</li>
+        <li>Quản trị viên server chịu trách nhiệm cấu hình và sử dụng công cụ đúng mục đích.</li>
+      </ul>
+    </div>
   </section>
 
   <section class="legal-section glass reveal">
-    <h2><span class="n">08</span><span>AI</span></h2>
-    <p>Phản hồi AI (text hoặc ảnh) có thể không chính xác, không đầy đủ hoặc lỗi thời. Không coi kết quả AI như sự thật, lời khuyên chuyên môn, y tế, pháp lý hay tài chính.</p>
-    <p>Nova không đảm bảo AI luôn trả lời đúng, phù hợp hoặc không chứa nội dung gây hại. AI được hỗ trợ bởi <strong>Qwen3.7-max</strong>.</p>
+    <h2><span class="n">08</span><span data-i18n="tos.s08t">Tính khả dụng</span></h2>
+    <div data-i18n-html="tos.s08">
+      <p>Nova được cung cấp "nguyên trạng" và "tuỳ theo khả dụng". Chúng tôi không cam kết bot online 100% hoặc mọi tính năng hoạt động liên tục.</p>
+      <p>Gián đoạn có thể đến từ Discord, nhà cung cấp AI, nhà cung cấp hạ tầng hoặc quá trình bảo trì bot.</p>
+    </div>
   </section>
 
   <section class="legal-section glass reveal">
-    <h2><span class="n">09</span><span>War / Backup</span></h2>
-    <p>Nova hỗ trợ tạo và quản lý yêu cầu War Ping / Backup Ping với thread riêng và phân quyền End rõ ràng. Chủ bot không chịu trách nhiệm về kết quả các trận War/Backup giữa các server.</p>
+    <h2><span class="n">09</span><span data-i18n="tos.s09t">Thay đổi dịch vụ</span></h2>
+    <div data-i18n-html="tos.s09">
+      <p>Chúng tôi có thể thêm, sửa hoặc xoá bất kỳ tính năng nào của Nova vào bất kỳ lúc nào, bao gồm lệnh, quyền hạn và hành vi.</p>
+      <p>Điều khoản này cũng có thể được cập nhật. Phiên bản mới nhất luôn được đăng tại trang này. Việc tiếp tục sử dụng Nova sau khi cập nhật đồng nghĩa bạn chấp nhận phiên bản mới.</p>
+    </div>
   </section>
 
   <section class="legal-section glass reveal">
-    <h2><span class="n">10</span><span>Event</span></h2>
-    <p>Nova hỗ trợ tạo event với panel tham gia, quản lý danh sách và công bố kết quả. Quản trị viên server chịu trách nhiệm tổ chức event đúng quy định.</p>
+    <h2><span class="n">10</span><span data-i18n="tos.s10t">Chấm dứt sử dụng</span></h2>
+    <div data-i18n-html="tos.s10">
+      <p>Chúng tôi có quyền tạm ngưng hoặc chấm dứt quyền truy cập Nova với bất kỳ người dùng hoặc server vi phạm Điều khoản này, không cần thông báo trước.</p>
+      <p>Bạn có thể gỡ Nova khỏi server bất kỳ lúc nào để dừng sử dụng dịch vụ.</p>
+    </div>
   </section>
 
   <section class="legal-section glass reveal">
-    <h2><span class="n">11</span><span>Nội dung do người dùng gửi</span></h2>
-    <p>Bạn chịu trách nhiệm về mọi nội dung bạn gửi qua Nova (tin nhắn, prompt, ảnh mô tả, cấu hình). Không gửi nội dung vi phạm pháp luật, xâm phạm quyền của người khác hoặc gây hại.</p>
+    <h2><span class="n">11</span><span data-i18n="tos.s11t">Giới hạn trách nhiệm</span></h2>
+    <div data-i18n-html="tos.s11">
+      <p>Chủ bot không chịu trách nhiệm cho bất kỳ thiệt hại trực tiếp hoặc gián tiếp nào phát sinh từ việc sử dụng hoặc không thể sử dụng Nova, bao gồm nhưng không giới hạn ở: mất dữ liệu, gián đoạn server, hành động moderation, nội dung do AI tạo ra, hoặc kết quả của các phiên War / Backup / Event giữa các server.</p>
+      <p>Bạn sử dụng Nova hoàn toàn tự chịu rủi ro.</p>
+    </div>
   </section>
 
   <section class="legal-section glass reveal">
-    <h2><span class="n">12</span><span>Dịch vụ bên thứ ba</span></h2>
-    <p>Nova sử dụng Discord, nhà cung cấp AI (Qwen3.7-max), và nhà cung cấp hạ tầng để vận hành. Chúng tôi không kiểm soát và không đảm bảo các dịch vụ bên thứ ba luôn hoạt động.</p>
-  </section>
-
-  <section class="legal-section glass reveal">
-    <h2><span class="n">13</span><span>Tính khả dụng</span></h2>
-    <p>Nova được cung cấp "nguyên trạng" và "tùy theo khả dụng". Chúng tôi không cam kết bot online 100% hoặc mọi tính năng hoạt động liên tục. Gián đoạn có thể do Discord, nhà cung cấp AI, hạ tầng hoặc bảo trì bot.</p>
-  </section>
-
-  <section class="legal-section glass reveal">
-    <h2><span class="n">14</span><span>Thay đổi tính năng</span></h2>
-    <p>Chúng tôi có thể thêm, sửa hoặc xóa bất kỳ tính năng nào của Nova vào bất kỳ lúc nào, bao gồm lệnh, quyền hạn và hành vi.</p>
-  </section>
-
-  <section class="legal-section glass reveal">
-    <h2><span class="n">15</span><span>Chấm dứt sử dụng</span></h2>
-    <p>Chúng tôi có quyền tạm ngưng hoặc chấm dứt quyền truy cập Nova với bất kỳ người dùng hoặc server vi phạm Điều khoản này, không cần thông báo trước. Bạn có thể gỡ Nova khỏi server bất kỳ lúc nào.</p>
-  </section>
-
-  <section class="legal-section glass reveal">
-    <h2><span class="n">16</span><span>Thay đổi điều khoản</span></h2>
-    <p>Điều khoản này có thể được cập nhật. Phiên bản mới nhất luôn được đăng tại trang này. Việc tiếp tục sử dụng Nova sau khi cập nhật đồng nghĩa bạn chấp nhận phiên bản mới.</p>
-  </section>
-
-  <section class="legal-section glass reveal">
-    <h2><span class="n">17</span><span>Liên hệ</span></h2>
-    <p>Mọi câu hỏi về Điều khoản Dịch vụ, vui lòng liên hệ:</p>
-    <ul>
-      <li>Bot Owner: <strong>nova_.inovation</strong></li>
-      <li>Email: <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a></li>
-      <li>Support Server: <a href="https://discord.gg/qkyu3G6WMa" target="_blank" rel="noopener noreferrer">discord.gg/qkyu3G6WMa</a></li>
-    </ul>
+    <h2><span class="n">12</span><span data-i18n="tos.s12t">Liên hệ</span></h2>
+    <div data-i18n-html="tos.s12">
+      <p>Mọi câu hỏi về Điều khoản Dịch vụ, vui lòng liên hệ:</p>
+      <ul>
+        <li>Bot Owner: <strong>nova_.inovation</strong></li>
+        <li>Email: <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a></li>
+        <li>Support Server: <a href="https://discord.gg/qkyu3G6WMa" target="_blank" rel="noopener noreferrer">discord.gg/qkyu3G6WMa</a></li>
+      </ul>
+    </div>
   </section>
 </main>
 
@@ -200,13 +211,15 @@
   <div class="footer-inner">
     <div>
       <div class="footer-brand"><span class="nav-orb">◉</span><span>Nova</span></div>
-      <p class="footer-tagline" data-i18n="footer.tagline">Trợ lý thông minh cho Discord.</p>
+      <p class="footer-tagline" data-i18n="footer.tagline">AI-powered Discord bot.</p>
+      <p class="footer-meta">Bot Owner: nova_.inovation<br>AI Provider: Qwen3.7-max</p>
     </div>
     <div class="footer-col">
-      <h5 data-i18n="footer.links">Liên kết</h5>
+      <h5 data-i18n="footer.nav">Điều hướng</h5>
       <ul>
         <li><a href="./index.html" data-i18n="nav.home">Trang chủ</a></li>
         <li><a href="./index.html#features" data-i18n="nav.features">Tính năng</a></li>
+        <li><a href="./index.html#commands" data-i18n="nav.commands">Lệnh</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -225,11 +238,11 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span data-i18n="footer.copyright">© 2026 Nova</span>
+    <span data-i18n="footer.copyright">© 2026 Nova. All rights reserved.</span>
     <span><span data-i18n="footer.effective">Ngày hiệu lực</span>: 19/09/2026</span>
   </div>
 </footer>
 
-<script src="script.js"></script>
+<script src="./script.js"></script>
 </body>
 </html>
