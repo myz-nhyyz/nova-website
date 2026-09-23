@@ -1,280 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#07070c">
-<title>Nova — Intelligent Discord Bot</title>
-<meta name="description" content="Nova is an intelligent Discord bot providing AI chat, AI image generation, moderation, Ban Zone, War / Backup tools, events and server utilities.">
-<link rel="icon" type="image/png" href="./assets/favicon.png">
-<meta property="og:title" content="Nova — Intelligent Discord Bot">
-<meta property="og:description" content="AI chat, AI image, moderation, Ban Zone, War / Backup, events and server utilities — inside Discord.">
-<meta property="og:image" content="./assets/avatar.png">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050507">
+  <meta name="description" content="Nova - Discord bot với AI, moderation, Ban Zone, War Ping và Event.">
+  <title>Nova — Discord bot</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="redesign.css">
+  <link rel="stylesheet" href="wordmark.css">
 </head>
-<body data-page="index">
-
-<div class="bg" aria-hidden="true">
-  <div class="blob b1"></div>
-  <div class="blob b2"></div>
-  <div class="blob b3"></div>
-</div>
-<div class="grain" aria-hidden="true"></div>
-<div class="page-fade" aria-hidden="true"></div>
-
-<!-- ============ NAVBAR ============ -->
-<nav class="nav glass" aria-label="Main navigation">
-  <a href="./index.html" class="nav-brand">
-    <span class="nav-orb">◉</span>
-    <span>Nova</span>
-  </a>
-
-  <div class="nav-links" id="navLinks">
-    <a href="./index.html" class="active" data-i18n="nav.home">Trang chủ</a>
-    <a href="#features" data-i18n="nav.features">Tính năng</a>
-    <a href="#commands" data-i18n="nav.commands">Lệnh</a>
-    <a href="#features" data-cat="ai" data-i18n="nav.ai">AI</a>
-    <a href="#features" data-cat="moderation" data-i18n="nav.moderation">Moderation</a>
-    <a href="#features" data-cat="war" data-i18n="nav.war">War</a>
-    <a href="#features" data-cat="event" data-i18n="nav.event">Event</a>
-    <a href="#help" data-i18n="nav.help">Trợ giúp</a>
-    <a href="./privacy-policy.html" data-i18n="nav.privacy">Bảo mật</a>
-    <a href="./terms-of-service.html" data-i18n="nav.terms">Điều khoản</a>
-  </div>
-
-  <div class="nav-right">
-    <div class="lang" role="tablist" aria-label="Language">
-      <span class="lang-thumb" aria-hidden="true"></span>
-      <button data-lang="vi" class="active" role="tab" aria-selected="true">
-        <span class="flag">🇻🇳</span><span>VI</span>
-      </button>
-      <button data-lang="en" role="tab" aria-selected="false">
-        <span class="flag">🇺🇸</span><span>EN</span>
-      </button>
-    </div>
-    <a href="#" data-invite class="invite-btn" target="_blank" rel="noopener noreferrer">
-      <span data-i18n="nav.invite">Mời Nova</span>
-      <span aria-hidden="true">→</span>
-    </a>
-    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <line x1="4" y1="7" x2="20" y2="7"/>
-        <line x1="4" y1="12" x2="20" y2="12"/>
-        <line x1="4" y1="17" x2="20" y2="17"/>
-      </svg>
-    </button>
-  </div>
-</nav>
-
-<!-- ============ MOBILE MENU ============ -->
-<div class="mobile-menu glass" id="mobileMenu" role="menu">
-  <a href="./index.html" data-i18n="nav.home">Trang chủ</a>
-  <a href="#features" data-i18n="nav.features">Tính năng</a>
-  <a href="#commands" data-i18n="nav.commands">Lệnh</a>
-  <a href="#features" data-cat="ai" data-i18n="nav.ai">AI</a>
-  <a href="#features" data-cat="moderation" data-i18n="nav.moderation">Moderation</a>
-  <a href="#features" data-cat="war" data-i18n="nav.war">War / Backup</a>
-  <a href="#features" data-cat="event" data-i18n="nav.event">Event</a>
-  <a href="#help" data-i18n="nav.help">Trợ giúp</a>
-  <a href="./privacy-policy.html" data-i18n="nav.privacy">Bảo mật</a>
-  <a href="./terms-of-service.html" data-i18n="nav.terms">Điều khoản</a>
-  <a href="#" data-invite class="invite-btn" target="_blank" rel="noopener noreferrer">
-    <span data-i18n="nav.invite">Mời Nova</span>
-    <span aria-hidden="true">→</span>
-  </a>
-</div>
-
-<main>
-  <!-- ============ HERO ============ -->
-  <header class="hero">
-    <div class="hero-avatar glass reveal" id="heroAvatar">
-      <img src="./assets/avatar.png" alt="Nova bot avatar" width="108" height="108" id="heroAvatarImg">
-    </div>
-
-    <h1 class="reveal" data-delay="60">
-      Nova — <em data-i18n="hero.tagline">Trợ lý thông minh cho Discord.</em>
-    </h1>
-
-    <p class="hero-tagline reveal" data-delay="120" data-i18n="hero.subtitle">
-      AI chat, tạo ảnh AI, công cụ server, moderation, Ban Zone, War / Backup, Event và các tiện ích cấu hình — tất cả ngay trong Discord.
-    </p>
-
-    <div class="hero-actions reveal" data-delay="180">
-      <a href="#" data-invite class="btn btn-primary" target="_blank" rel="noopener noreferrer">
-        <span data-i18n="hero.invite">Mời Nova</span>
-        <span aria-hidden="true">→</span>
-      </a>
-      <a href="https://discord.gg/qkyu3G6WMa" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">
-        <span data-i18n="hero.support">Tham gia Support Server</span>
-      </a>
-      <a href="#features" class="btn btn-ghost" data-scroll>
-        <span data-i18n="hero.explore">Khám phá tính năng</span>
-      </a>
-    </div>
+<body data-page="home">
+  <a class="skip-link" href="#main">Bỏ qua đến nội dung</a>
+  <div class="aurora" aria-hidden="true"><span class="blob blob-one"></span><span class="blob blob-two"></span><span class="blob blob-three"></span><span class="grain"></span></div>
+  <header class="site-header">
+    <nav class="nav glass" aria-label="Điều hướng chính">
+      <a class="brand" href="#home" aria-label="Nova trang chủ"><img src="assets/avatar.svg" alt="Nova avatar"><span>Nova</span></a>
+      <div class="nav-links">
+        <a class="nav-link active" href="#home">Trang chủ</a><a class="nav-link" href="#features">Tính năng</a><a class="nav-link" href="#commands">Lệnh</a><a class="nav-link" href="#help">Help</a><a class="nav-link" href="privacy-policy.html">Privacy</a><a class="nav-link" href="terms-of-service.html">Terms</a>
+      </div>
+      <div class="nav-actions"><div class="language-switch" role="group" aria-label="Ngôn ngữ"><span class="seg-thumb"></span><button class="lang-button active" data-lang="vi">VI</button><button class="lang-button" data-lang="en">EN</button></div><a class="btn btn-primary invite-nav" href="https://discord.com/oauth2/authorize?client_id=1532745879944036523" target="_blank" rel="noreferrer">Mời Nova</a><button class="icon-button menu-toggle" aria-label="Mở menu" aria-expanded="false">☰</button></div>
+    </nav>
+    <div class="mobile-menu glass" aria-hidden="true"><a href="#home">Trang chủ</a><a href="#features">Tính năng</a><a href="#commands">Lệnh</a><a href="#help">Help</a><a href="privacy-policy.html">Privacy</a><a href="terms-of-service.html">Terms</a><a class="btn btn-primary" href="https://discord.gg/qkyu3G6WMa" target="_blank" rel="noreferrer">Tham gia Support Server</a></div>
   </header>
-
-  <!-- ============ FEATURES ============ -->
-  <section class="section" id="features">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="section-eyebrow" data-i18n="features.eyebrow">Tính năng</span>
-        <h2 data-i18n-html="features.title">Tính năng <em>mạnh mẽ.</em></h2>
-        <p class="section-sub" data-i18n="features.sub">Chọn một nhóm bên dưới để xem chi tiết từng tính năng và lệnh tương ứng.</p>
-      </div>
-
-      <div class="feature-shell reveal">
-        <aside class="feature-nav glass" id="featureNav" role="tablist" aria-label="Feature categories"></aside>
-        <div class="feature-panel glass" id="featurePanel" role="tabpanel"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ COMMANDS ============ -->
-  <section class="section" id="commands">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="section-eyebrow" data-i18n="commands.eyebrow">Danh mục lệnh</span>
-        <h2 data-i18n-html="commands.title">Toàn bộ <em>lệnh</em></h2>
-        <p class="section-sub" data-i18n="commands.sub">Tìm kiếm hoặc duyệt theo nhóm. Nhấn vào một lệnh để xem chi tiết.</p>
-      </div>
-
-      <div class="search-wrap reveal">
-        <div class="search-box glass">
-          <span class="search-icon" aria-hidden="true">⌕</span>
-          <input type="search" id="commandSearch" autocomplete="off" spellcheck="false"
-                 placeholder="Tìm lệnh… (ban, image, war, event, config…)"
-                 data-i18n-placeholder="search.placeholder"
-                 aria-label="Search commands" aria-controls="searchResults">
-          <button class="search-clear" id="searchClear" type="button" aria-label="Clear search" hidden>✕</button>
-        </div>
-        <div class="search-results glass" id="searchResults" role="listbox" hidden></div>
-      </div>
-
-      <div class="commands-directory" id="commandsDirectory"></div>
-    </div>
-  </section>
-
-  <!-- ============ HELP MENU ============ -->
-  <section class="section" id="help">
-    <div class="container">
-      <div class="section-head reveal">
-        <span class="section-eyebrow" data-i18n="help.eyebrow">Help System</span>
-        <h2 data-i18n-html="help.title">Menu trợ giúp <em>tương tác</em></h2>
-        <p class="section-sub" data-i18n="help.sub">Dùng <code>!help</code> để mở menu, hoặc <code>!help &lt;feature&gt;</code> để xem đúng mục bạn cần.</p>
-      </div>
-
-      <div class="help-mock glass reveal">
-        <div class="help-mock-head">
-          <span class="help-mock-orb" aria-hidden="true">◉</span>
-          <div>
-            <h4 data-i18n="help.head">Nova Help Menu</h4>
-            <p data-i18n="help.categories">Danh mục</p>
-          </div>
-        </div>
-
-        <div class="help-mock-body">
-          <h5 data-i18n="help.menuTitle">📖 Help Menu</h5>
-          <p data-i18n="help.menuDesc">Chọn một danh mục trong dropdown để xem chi tiết. Menu chỉ hiển thị phần bạn chọn, tránh một "bức tường chữ".</p>
-
-          <div class="help-mock-label" data-i18n="help.categories">Danh mục</div>
-
-          <div class="dropdown" id="helpDropdown">
-            <button class="dropdown-toggle" aria-expanded="false" aria-haspopup="listbox">
-              <span class="dropdown-label" data-i18n="help.select">Đưa ra lựa chọn</span>
-              <span class="chev" aria-hidden="true">▾</span>
-            </button>
-            <div class="dropdown-menu" role="listbox" id="helpDropdownMenu"></div>
-          </div>
-
-          <div class="help-output" id="helpOutput"></div>
-
-          <div class="help-mock-label" style="margin-top:22px;" data-i18n="help.tip">💡 Mẹo</div>
-          <p class="help-tip" data-i18n="help.tipText">Bạn cũng có thể gõ trực tiếp <code>!help chat</code>, <code>!help ban</code>, <code>!help event</code>… để nhảy thẳng tới mục tương ứng.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ CTA ============ -->
-  <section class="section">
-    <div class="container">
-      <div class="cta glass reveal">
-        <h2 data-i18n-html="cta.title">Sẵn sàng dùng thử <em>Nova?</em></h2>
-        <p data-i18n="cta.desc">Mời Nova vào server của bạn — miễn phí, không cần cấu hình phức tạp.</p>
-        <div class="hero-actions" style="margin-bottom:0;">
-          <a href="#" data-invite class="btn btn-primary" target="_blank" rel="noopener noreferrer">
-            <span data-i18n="cta.invite">Mời Nova</span>
-            <span aria-hidden="true">→</span>
-          </a>
-          <a href="https://discord.gg/qkyu3G6WMa" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">
-            <span data-i18n="cta.support">Tham gia Support Server</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<!-- ============ FOOTER ============ -->
-<footer>
-  <div class="footer-inner">
-    <div>
-      <div class="footer-brand"><span class="nav-orb">◉</span><span>Nova</span></div>
-      <p class="footer-tagline" data-i18n="footer.tagline">AI-powered Discord bot.</p>
-      <p class="footer-meta">
-        Bot Owner: nova_.inovation<br>
-        AI Provider: Qwen3.7-max
-      </p>
-    </div>
-
-    <div class="footer-col">
-      <h5 data-i18n="footer.nav">Điều hướng</h5>
-      <ul>
-        <li><a href="./index.html" data-i18n="nav.home">Trang chủ</a></li>
-        <li><a href="#features" data-i18n="nav.features">Tính năng</a></li>
-        <li><a href="#commands" data-i18n="nav.commands">Lệnh</a></li>
-        <li><a href="./privacy-policy.html" data-i18n="nav.privacy">Chính sách bảo mật</a></li>
-        <li><a href="./terms-of-service.html" data-i18n="nav.terms">Điều khoản dịch vụ</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-col">
-      <h5 data-i18n="footer.community">Cộng đồng</h5>
-      <ul>
-        <li><a href="https://discord.gg/qkyu3G6WMa" target="_blank" rel="noopener noreferrer">Support Server</a></li>
-        <li><a href="#" data-invite target="_blank" rel="noopener noreferrer" data-i18n="nav.invite">Mời Nova</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-col">
-      <h5 data-i18n="footer.contact">Liên hệ</h5>
-      <ul>
-        <li><a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a></li>
-        <li><span class="footer-static">nova_.inovation</span></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
-    <span data-i18n="footer.copyright">© 2026 Nova. All rights reserved.</span>
-    <span><span data-i18n="footer.effective">Ngày hiệu lực</span>: 19/09/2026</span>
-  </div>
-</footer>
-
-<!-- ============ MODAL ============ -->
-<div class="modal-root" id="modalRoot" aria-hidden="true">
-  <div class="modal-backdrop" data-modal-close></div>
-  <div class="modal glass" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
-    <button class="modal-close" type="button" data-modal-close aria-label="Close">✕</button>
-    <div class="modal-body" id="modalBody"></div>
-  </div>
-</div>
-
-<script src="./script.js"></script>
+  <main id="main">
+    <section id="home" class="hero section-shell">
+      <div class="hero-copy reveal"><div class="avatar-wrap"><span class="avatar-glow"></span><img src="assets/avatar.svg" alt="Nova bot avatar" class="hero-avatar"></div><p class="eyebrow">✦ Discord bot / made for communities</p><h1>Nova</h1><p class="hero-subtitle">AI thông minh, moderation vững vàng và những công cụ cộng đồng được gói gọn trong một bot.</p><div class="hero-actions"><a class="btn btn-primary" href="https://discord.com/oauth2/authorize?client_id=1532745879944036523" target="_blank" rel="noreferrer">Mời Nova <span>↗</span></a><a class="btn btn-glass" href="https://discord.gg/qkyu3G6WMa" target="_blank" rel="noreferrer">Tham gia Support</a><a class="btn btn-ghost" href="#features">Khám phá tính năng <span>↓</span></a></div></div>
+      <div class="stats-grid reveal"><div class="stat glass"><span class="stat-value">Qwen3.7-max</span><span class="stat-label">Mô hình AI</span></div><div class="stat glass"><span class="stat-value">nova_.inovation</span><span class="stat-label">Chủ sở hữu</span></div><div class="stat glass"><span class="stat-value">6</span><span class="stat-label">Nhóm tính năng</span></div><div class="stat glass"><span class="stat-value">60+</span><span class="stat-label">Lệnh sẵn sàng</span></div></div>
+    </section>
+    <section id="features" class="section-shell section"><div class="section-heading reveal"><div><p class="eyebrow">01 / capabilities</p><h2>Một bot, nhiều nhịp sống.</h2></div><p>Nova được thiết kế để server vận hành rõ ràng hơn, an toàn hơn và vui hơn.</p></div><div id="feature-grid" class="feature-grid"></div></section>
+    <section id="commands" class="section-shell section"><div class="section-heading reveal"><div><p class="eyebrow">02 / command deck</p><h2>Tìm đúng lệnh, thật nhanh.</h2></div><p>Tra cứu command theo nhóm, type và quyền cần thiết.</p></div><div class="command-toolbar glass"><div class="search-wrap"><span>⌕</span><input id="command-search" type="search" placeholder="Tìm lệnh hoặc mô tả..." aria-label="Tìm lệnh"><button id="clear-search" class="clear-search" aria-label="Xóa tìm kiếm">×</button></div><div id="category-chips" class="chips"></div></div><div id="command-list" class="command-list"></div><p id="no-results" class="empty-state" hidden>Không tìm thấy lệnh phù hợp.</p></section>
+    <section id="help" class="section-shell section"><div class="section-heading reveal"><div><p class="eyebrow">03 / help desk</p><h2>Help, nhưng có ngữ cảnh.</h2></div><p>Chọn một nhóm để xem nhanh cách Nova hoạt động trong server của bạn.</p></div><div class="help-layout"><div class="discord-preview glass reveal"><div class="discord-top"><span class="discord-mark">◈</span><div><strong>Nova Help Menu</strong><small>Nova • hôm nay lúc 09:42</small></div><span class="online-dot"></span></div><div id="help-preview" class="help-preview"></div><div class="discord-footer">Nova • hỗ trợ server của bạn</div></div><div class="help-side"><div class="glass help-panel reveal"><p class="eyebrow">Quick command</p><h3>!help &lt;feature&gt;</h3><div id="help-feature-chips" class="chips compact"></div><div id="help-feature-result" class="help-result"></div></div><div class="glass help-panel reveal"><p class="eyebrow">Field notes</p><h3>Tips for a calmer server</h3><ul class="tip-list"><li><span>01</span><div><strong>Bật AI theo kênh</strong><small>Dùng <code>/setai value:true</code> để chọn nơi Nova trò chuyện.</small></div></li><li><span>02</span><div><strong>Giữ quyền rõ ràng</strong><small>Trusted users giúp chia nhỏ trách nhiệm moderation.</small></div></li><li><span>03</span><div><strong>Luôn có backup</strong><small>Security backup lưu cấu trúc role và channel quan trọng.</small></div></li></ul></div></div></div></section>
+  </main>
+  <footer class="site-footer"><div class="footer-inner"><div class="footer-brand"><a class="brand" href="#home"><img src="assets/avatar.svg" alt="Nova avatar"><span>Nova</span></a><p>AI, security và community tools cho Discord.</p></div><div><p class="footer-label">Navigate</p><a href="#features">Tính năng</a><a href="#commands">Lệnh</a><a href="#help">Help</a></div><div><p class="footer-label">Legal</p><a href="privacy-policy.html">Privacy Policy</a><a href="terms-of-service.html">Terms of Service</a></div><div><p class="footer-label">Contact</p><a href="mailto:anhbao27072011@gmail.com">Email Nova</a><a href="https://discord.gg/qkyu3G6WMa" target="_blank" rel="noreferrer">Support Server ↗</a></div></div><div class="footer-bottom"><span>© 2026 Nova. Built for Discord.</span><span>Effective 19/09/2026</span></div></footer>
+  <div id="feature-modal" class="modal-backdrop" hidden><div class="modal glass" role="dialog" aria-modal="true" aria-labelledby="feature-modal-title"><button class="modal-close icon-button" data-close="feature-modal" aria-label="Đóng">×</button><div id="feature-modal-content"></div></div></div>
+  <div id="update-modal" class="modal-backdrop" hidden><div class="update-modal glass" role="dialog" aria-modal="true" aria-labelledby="update-modal-title"><button class="modal-close icon-button" data-close="update-modal" aria-label="Đóng">×</button><header class="update-header"><p class="eyebrow">Nova changelog</p><h2 id="update-modal-title">✨ UPDATE 03</h2><p>Những gì vừa được thêm vào Nova.</p></header><div id="update-log-body" class="update-history"></div><footer class="update-footer"><label><input id="snooze-updates" type="checkbox"> Tắt update-logs trong 24h</label><button class="btn btn-light" data-close="update-modal">Okay</button></footer></div></div>
+  <script src="script.js"></script>
+  <script src="motion.js"></script>
 </body>
 </html>
