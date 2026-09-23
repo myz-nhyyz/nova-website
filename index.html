@@ -14,31 +14,44 @@
   <link rel="stylesheet" href="redesign.css">
   <link rel="stylesheet" href="wordmark.css">
 
-  <!-- Ép lưới feature thành 3 cột × 2 hàng (ghi đè redesign.css) -->
+  <!-- ============================================================
+       FIX: Lưới feature 3 cột × 2 hàng đều tăm tắp
+       Load cuối cùng + selector siêu cụ thể + !important
+       để chắc chắn thắng mọi rule trong redesign.css
+       ============================================================ -->
   <style>
-    #feature-grid.feature-grid{
-      grid-template-columns:repeat(3,1fr)!important;
+    body[data-page="home"] #feature-grid.feature-grid{
+      display:grid!important;
+      grid-template-columns:repeat(3,minmax(0,1fr))!important;
+      grid-auto-rows:1fr!important;
       gap:14px!important;
+      align-items:stretch!important;
     }
-    #feature-grid .feature-card,
-    #feature-grid .feature-card:nth-child(4){
+    body[data-page="home"] #feature-grid .feature-card,
+    body[data-page="home"] #feature-grid .feature-card:nth-child(1),
+    body[data-page="home"] #feature-grid .feature-card:nth-child(2),
+    body[data-page="home"] #feature-grid .feature-card:nth-child(3),
+    body[data-page="home"] #feature-grid .feature-card:nth-child(4),
+    body[data-page="home"] #feature-grid .feature-card:nth-child(5),
+    body[data-page="home"] #feature-grid .feature-card:nth-child(6){
       grid-column:auto!important;
-    }
-    #feature-grid .feature-card:nth-child(5),
-    #feature-grid .feature-card:nth-child(6){
+      grid-row:auto!important;
       transform:none!important;
+      height:100%!important;
+      min-height:260px!important;
     }
-    #feature-grid .feature-card:hover,
-    #feature-grid .feature-card:nth-child(4):hover,
-    #feature-grid .feature-card:nth-child(5):hover,
-    #feature-grid .feature-card:nth-child(6):hover{
+    body[data-page="home"] #feature-grid .feature-card:hover{
       transform:translateY(-10px) rotate(-1deg)!important;
     }
     @media (max-width:1080px){
-      #feature-grid.feature-grid{grid-template-columns:repeat(2,1fr)!important}
+      body[data-page="home"] #feature-grid.feature-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr))!important;
+      }
     }
     @media (max-width:760px){
-      #feature-grid.feature-grid{grid-template-columns:1fr!important}
+      body[data-page="home"] #feature-grid.feature-grid{
+        grid-template-columns:1fr!important;
+      }
     }
   </style>
 </head>
