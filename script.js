@@ -125,12 +125,166 @@ function bindFeatures(){$$('[data-feature]').forEach(card=>{card.addEventListene
 function observeReveals(){if(!('IntersectionObserver'in window)){$$('.reveal').forEach(el=>el.classList.add('in'));return}const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in');observer.unobserve(entry.target)}}),{threshold:.12});$$('.reveal').forEach(el=>observer.observe(el))}
 function setup(){renderFeatures();renderChips();renderCommands();renderHelp();renderUpdates();observeReveals();const stored=localStorage.getItem('nova-lang');if(stored==='en')document.querySelector('.language-switch')?.classList.add('en');$$('.lang-button').forEach(button=>button.addEventListener('click',()=>{localStorage.setItem('nova-lang',button.dataset.lang);$('.language-switch').classList.toggle('en',button.dataset.lang==='en')}));$('#command-search')?.addEventListener('input',renderCommands);$('#clear-search')?.addEventListener('click',()=>{$('#command-search').value='';renderCommands();$('#command-search').focus()});$$('[data-close]').forEach(button=>button.addEventListener('click',()=>closeModal(button.dataset.close)));$$('.modal-backdrop').forEach(backdrop=>backdrop.addEventListener('click',event=>{if(event.target===backdrop)closeModal(backdrop.id)}));document.addEventListener('keydown',event=>{if(event.key==='Escape')$$('.modal-backdrop').filter(m=>!m.hidden).forEach(m=>closeModal(m.id));});const toggle=$('.menu-toggle'),menu=$('.mobile-menu');toggle?.addEventListener('click',()=>{const open=menu.classList.toggle('open');toggle.setAttribute('aria-expanded',open);menu.setAttribute('aria-hidden',!open)});$$('.mobile-menu a').forEach(link=>link.addEventListener('click',()=>menu.classList.remove('open')));const sectionLinks=$$('.nav-link[href^="#"]');const sections=sectionLinks.map(link=>$(link.getAttribute('href'))).filter(Boolean);if(sections.length){const spy=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)sectionLinks.forEach(link=>link.classList.toggle('active',link.getAttribute('href')===`#${entry.target.id}`))}),{rootMargin:'-35% 0px -55%'});sections.forEach(section=>spy.observe(section))}if(document.body.dataset.page==='home'){const until=Number(localStorage.getItem('nova_update_log_snooze_until')||0);if(Date.now()>until)setTimeout(()=>{$('#update-modal').hidden=false},600);$('#snooze-updates')?.addEventListener('change',event=>{if(event.target.checked)localStorage.setItem('nova_update_log_snooze_until',String(Date.now()+86400000))})}}
 window.addEventListener('DOMContentLoaded',setup);
-window.addEventListener('DOMContentLoaded',()=>{
-if(document.body.dataset.page!=='legal')return;
-const actions=document.querySelector('.nav-actions');
-if(!actions)return;
-actions.innerHTML='<div class="language-switch" role="group" aria-label="Ngôn ngữ"><span class="seg-thumb"></span><button class="lang-button active" data-lang="vi">VI</button><button class="lang-button" data-lang="en">EN</button></div><button class="icon-button menu-toggle" aria-label="Mở menu" aria-expanded="false">☰</button>';
-const menu=document.createElement('div');menu.className='mobile-menu glass';menu.setAttribute('aria-hidden','true');menu.innerHTML='<a href="index.html">Trang chủ</a><a href="index.html#features">Tính năng</a><a href="index.html#commands">Lệnh</a><a href="index.html#help">Help</a>';document.querySelector('.site-header')?.append(menu);
-actions.querySelectorAll('.lang-button').forEach(button=>button.addEventListener('click',()=>{localStorage.setItem('nova-lang',button.dataset.lang);actions.querySelector('.language-switch').classList.toggle('en',button.dataset.lang==='en');document.documentElement.lang=button.dataset.lang;}));
-const toggle=actions.querySelector('.menu-toggle');toggle.addEventListener('click',()=>{const open=menu.classList.toggle('open');toggle.setAttribute('aria-expanded',open);menu.setAttribute('aria-hidden',!open);});
+
+/* ============================================================
+   Legal pages i18n — VI/EN dịch thật nội dung
+   (Không tạo hamburger, nav ngang do HTML lo)
+   ============================================================ */
+const LEGAL_COPY = {
+  privacy: {
+    vi: {
+      title: 'Privacy Policy',
+      intro: 'Chính sách này có hiệu lực từ ngày <strong>19/09/2026</strong> và mô tả cách Nova xử lý dữ liệu khi bạn sử dụng bot.',
+      navLabels: { home: 'Trang chủ', features: 'Tính năng', commands: 'Lệnh', help: 'Giúp đỡ', terms: 'Terms', privacy: 'Privacy' },
+      sections: [
+        { h: '1. Giới thiệu', p: 'Nova là Discord bot do <strong>nova_.inovation</strong> vận hành, cung cấp AI Chatbot, moderation, security, Ban Zone, War/Backup và Event tools.' },
+        { h: '2. Dữ liệu Nova có thể xử lý', p: 'Tuỳ tính năng được bật, Nova có thể xử lý ID người dùng và server, nội dung tin nhắn gửi đến AI, lịch sử AI, dữ liệu moderation, event, War/Backup, cấu hình server và prefix riêng.' },
+        { h: '3. Nhà cung cấp AI', p: 'AI công khai của Nova sử dụng <strong>Qwen3.7-max</strong>. Tạo ảnh dùng Cocolink là nhà cung cấp chính và Gemini làm dự phòng. Chỉ dữ liệu cần thiết cho yêu cầu được chuyển tiếp.' },
+        { h: '4. Lưu trữ tối thiểu', p: 'Nova chỉ giữ dữ liệu cần cho tính năng đang hoạt động. Bạn có thể xoá lịch sử AI bằng <code>!clearchat</code>. Cấu hình được giữ khi server còn sử dụng bot và có thể được chủ server yêu cầu xoá.' },
+        { h: '5. Bảo mật', p: 'Nova giới hạn quyền truy cập nội bộ, tách dữ liệu theo server và không lưu token Discord hoặc API key của người dùng.' },
+        { h: '6. Quyền của bạn', p: 'Bạn có quyền yêu cầu xem, sửa hoặc xoá dữ liệu liên quan đến mình; chủ server có thể yêu cầu xoá cấu hình. Hãy liên hệ qua email bên dưới.' },
+        { h: '7. Liên hệ', p: 'Nếu có câu hỏi về quyền riêng tư, gửi email đến <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a>.' }
+      ],
+      contact: { icon: '✦', strong: 'Cần trao đổi trực tiếp?', p: 'anhbao27072011@gmail.com', btn: 'Gửi email ↗', href: 'mailto:anhbao27072011@gmail.com' }
+    },
+    en: {
+      title: 'Privacy Policy',
+      intro: 'This policy is effective from <strong>19/09/2026</strong> and describes how Nova processes data when you use the bot.',
+      navLabels: { home: 'Home', features: 'Features', commands: 'Commands', help: 'Help', terms: 'Terms', privacy: 'Privacy' },
+      sections: [
+        { h: '1. Introduction', p: 'Nova is a Discord bot operated by <strong>nova_.inovation</strong>, providing AI Chatbot, moderation, security, Ban Zone, War/Backup and Event tools.' },
+        { h: '2. Data Nova may process', p: 'Depending on enabled features, Nova may process user and server IDs, messages sent to AI, AI history, moderation data, event data, War/Backup data, server configuration and custom prefixes.' },
+        { h: '3. AI providers', p: "Nova's public AI uses <strong>Qwen3.7-max</strong>. Image generation uses Cocolink as the primary provider and Gemini as fallback. Only data necessary for the request is forwarded." },
+        { h: '4. Minimal storage', p: "Nova only keeps data needed for active features. You can clear AI history with <code>!clearchat</code>. Configuration is kept while the server uses the bot and can be deleted at the owner's request." },
+        { h: '5. Security', p: 'Nova limits internal access, isolates data per server, and does not store Discord tokens or user API keys.' },
+        { h: '6. Your rights', p: 'You can request to view, modify or delete data related to you; server owners can request configuration deletion. Contact via the email below.' },
+        { h: '7. Contact', p: 'For privacy questions, email <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a>.' }
+      ],
+      contact: { icon: '✦', strong: 'Need to talk directly?', p: 'anhbao27072011@gmail.com', btn: 'Send email ↗', href: 'mailto:anhbao27072011@gmail.com' }
+    }
+  },
+  terms: {
+    vi: {
+      title: 'Terms of Service',
+      intro: 'Các điều khoản này có hiệu lực từ ngày <strong>19/09/2026</strong>. Khi mời hoặc sử dụng Nova, bạn đồng ý với các điều khoản sau.',
+      navLabels: { home: 'Trang chủ', features: 'Tính năng', commands: 'Lệnh', help: 'Giúp đỡ', terms: 'Terms', privacy: 'Privacy' },
+      sections: [
+        { h: '1. Mô tả dịch vụ', p: 'Nova cung cấp công cụ AI, moderation, security, Ban Zone, War/Backup và Event cho cộng đồng Discord.' },
+        { h: '2. Sử dụng hợp lệ', p: 'Bạn phải tuân thủ Discord Terms of Service, Community Guidelines, pháp luật hiện hành và các quy định riêng của server.' },
+        { h: '3. Hành vi bị cấm', p: 'Không dùng Nova để spam, raid, lạm dụng quyền, quấy rối, phát tán nội dung bất hợp pháp hoặc cố gắng phá hoại bot và server.' },
+        { h: '4. Trách nhiệm kiểm duyệt', p: 'Chủ server và đội ngũ quản trị chịu trách nhiệm cấu hình moderation, security, whitelist, role hierarchy và quyết định xử lý member.' },
+        { h: '5. Prefix riêng', p: 'Prefix được lưu theo từng server. Chỉ người có Administrator, Manage Server hoặc Manage Channels nên thay đổi prefix và cần thông báo cho thành viên.' },
+        { h: '6. Nội dung AI', p: 'Phản hồi AI có thể sai, thiếu hoặc không phù hợp. Hãy kiểm tra thông tin trước khi dựa vào đó để ra quyết định.' },
+        { h: '7. War, Backup và Event', p: 'Người dùng chịu trách nhiệm về lời mời, nội dung và hành vi trong các phiên War, Backup và Event do server tạo.' },
+        { h: '8. Ban Zone', p: 'Ban Zone là công cụ tự động có thể ban hoặc mute theo cấu hình. Hãy thiết lập whitelist, mode và role hierarchy cẩn thận.' },
+        { h: '9. Tính khả dụng', p: 'Nova được cung cấp theo tình trạng hiện có. Có thể xảy ra gián đoạn do bảo trì, giới hạn Discord hoặc dịch vụ phụ thuộc.' },
+        { h: '10. Thay đổi dịch vụ', p: 'Nova có thể được cập nhật, thêm, thay đổi hoặc loại bỏ tính năng. Update log sẽ ghi nhận các thay đổi quan trọng.' },
+        { h: '11. Tạm ngừng hoặc chấm dứt', p: 'Nova có thể hạn chế hoặc chấm dứt quyền sử dụng khi phát hiện lạm dụng, vi phạm điều khoản hoặc yêu cầu từ Discord.' },
+        { h: '12. Liên hệ', p: 'Liên hệ <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a> cho câu hỏi về điều khoản.' }
+      ],
+      contact: { icon: '↗', strong: 'Support server', p: 'discord.gg/qkyu3G6WMa', btn: 'Tham gia ↗', href: 'https://discord.gg/qkyu3G6WMa' }
+    },
+    en: {
+      title: 'Terms of Service',
+      intro: 'These terms are effective from <strong>19/09/2026</strong>. By inviting or using Nova, you agree to the following terms.',
+      navLabels: { home: 'Home', features: 'Features', commands: 'Commands', help: 'Help', terms: 'Terms', privacy: 'Privacy' },
+      sections: [
+        { h: '1. Service description', p: 'Nova provides AI, moderation, security, Ban Zone, War/Backup and Event tools for Discord communities.' },
+        { h: '2. Acceptable use', p: "You must comply with Discord Terms of Service, Community Guidelines, applicable laws, and your server's rules." },
+        { h: '3. Prohibited behavior', p: 'Do not use Nova for spam, raids, permission abuse, harassment, illegal content, or attempts to damage the bot or servers.' },
+        { h: '4. Moderation responsibility', p: 'Server owners and admins are responsible for configuring moderation, security, whitelist, role hierarchy, and handling members.' },
+        { h: '5. Custom prefix', p: 'Prefixes are stored per server. Only users with Administrator, Manage Server, or Manage Channels should change the prefix and should notify members.' },
+        { h: '6. AI content', p: 'AI responses may be incorrect, incomplete, or inappropriate. Verify information before making decisions based on it.' },
+        { h: '7. War, Backup and Events', p: 'Users are responsible for invitations, content, and behavior in War, Backup, and Event sessions created by the server.' },
+        { h: '8. Ban Zone', p: 'Ban Zone is an automated tool that can ban or mute according to configuration. Set up whitelist, mode, and role hierarchy carefully.' },
+        { h: '9. Availability', p: 'Nova is provided as-is. Interruptions may occur due to maintenance, Discord limits, or dependent services.' },
+        { h: '10. Service changes', p: 'Nova may be updated, added to, modified, or have features removed. The update log will record significant changes.' },
+        { h: '11. Suspension or termination', p: 'Nova may limit or terminate usage rights when abuse, term violations, or Discord requirements are detected.' },
+        { h: '12. Contact', p: 'Contact <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a> for questions about the terms.' }
+      ],
+      contact: { icon: '↗', strong: 'Support server', p: 'discord.gg/qkyu3G6WMa', btn: 'Join ↗', href: 'https://discord.gg/qkyu3G6WMa' }
+    }
+  }
+};
+
+function applyLegalLang(pageKey, lang) {
+  const data = LEGAL_COPY[pageKey]?.[lang];
+  if (!data) return;
+
+  // Nav links (label thứ 4: Help ↔ Giúp đỡ)
+  const navMap = [
+    ['.nav-link[href="index.html"]', data.navLabels.home],
+    ['.nav-link[href="index.html#features"]', data.navLabels.features],
+    ['.nav-link[href="index.html#commands"]', data.navLabels.commands],
+    ['.nav-link[href="index.html#help"]', data.navLabels.help],
+    ['.nav-link[href="terms-of-service.html"]', data.navLabels.terms],
+    ['.nav-link[href="privacy-policy.html"]', data.navLabels.privacy]
+  ];
+  navMap.forEach(([sel, text]) => {
+    const el = document.querySelector(sel);
+    if (el) el.textContent = text;
+  });
+
+  // Doc content
+  const doc = document.querySelector('.legal-doc');
+  if (!doc) return;
+  const h1 = doc.querySelector('h1');
+  const intro = doc.querySelector('.legal-intro');
+  if (h1) h1.textContent = data.title;
+  if (intro) intro.innerHTML = data.intro;
+
+  doc.querySelectorAll('section').forEach(s => s.remove());
+  const contact = doc.querySelector('.contact-card');
+  data.sections.forEach(({ h, p }) => {
+    const sec = document.createElement('section');
+    const h2 = document.createElement('h2');
+    h2.textContent = h;
+    const pp = document.createElement('p');
+    pp.innerHTML = p;
+    sec.append(h2, pp);
+    if (contact) doc.insertBefore(sec, contact);
+    else doc.appendChild(sec);
+  });
+
+  if (contact) {
+    const icon = contact.querySelector('.contact-icon');
+    const strong = contact.querySelector('strong');
+    const para = contact.querySelector('p');
+    const btn = contact.querySelector('.btn');
+    if (icon) icon.textContent = data.contact.icon;
+    if (strong) strong.textContent = data.contact.strong;
+    if (para) para.textContent = data.contact.p;
+    if (btn) { btn.textContent = data.contact.btn; btn.href = data.contact.href; }
+  }
+
+  // Footer link "Trang chủ" / "Home"
+  const footerHomeLink = document.querySelector('.footer-bottom a[href="index.html"]');
+  if (footerHomeLink) footerHomeLink.textContent = lang === 'en' ? 'Home' : 'Trang chủ';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (document.body.dataset.page !== 'legal') return;
+
+  const pageKey = location.pathname.includes('terms') ? 'terms' : 'privacy';
+  const actions = document.querySelector('.nav-actions');
+  if (!actions) return;
+
+  let lang = localStorage.getItem('nova-lang') === 'en' ? 'en' : 'vi';
+
+  function applyLang(next) {
+    lang = next;
+    localStorage.setItem('nova-lang', lang);
+    document.documentElement.lang = lang;
+    actions.querySelector('.language-switch')?.classList.toggle('en', lang === 'en');
+    actions.querySelectorAll('.lang-button').forEach(b => {
+      b.classList.toggle('active', b.dataset.lang === lang);
+    });
+    applyLegalLang(pageKey, lang);
+  }
+
+  applyLang(lang);
+
+  actions.querySelectorAll('.lang-button').forEach(btn => {
+    btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+  });
 });
