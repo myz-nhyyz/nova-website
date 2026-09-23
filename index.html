@@ -8,7 +8,39 @@
   <title>Nova — Discord bot</title>
   <link rel="icon" href="assets/favicon.svg?v=3" type="image/svg+xml">
   <link rel="alternate icon" href="assets/favicon.svg?v=3" sizes="any">
+
+  <!-- Đúng thứ tự: base → redesign (đen/vàng) → wordmark -->
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="redesign.css">
+  <link rel="stylesheet" href="wordmark.css">
+
+  <!-- Ép lưới feature thành 3 cột × 2 hàng (ghi đè redesign.css) -->
+  <style>
+    #feature-grid.feature-grid{
+      grid-template-columns:repeat(3,1fr)!important;
+      gap:14px!important;
+    }
+    #feature-grid .feature-card,
+    #feature-grid .feature-card:nth-child(4){
+      grid-column:auto!important;
+    }
+    #feature-grid .feature-card:nth-child(5),
+    #feature-grid .feature-card:nth-child(6){
+      transform:none!important;
+    }
+    #feature-grid .feature-card:hover,
+    #feature-grid .feature-card:nth-child(4):hover,
+    #feature-grid .feature-card:nth-child(5):hover,
+    #feature-grid .feature-card:nth-child(6):hover{
+      transform:translateY(-10px) rotate(-1deg)!important;
+    }
+    @media (max-width:1080px){
+      #feature-grid.feature-grid{grid-template-columns:repeat(2,1fr)!important}
+    }
+    @media (max-width:760px){
+      #feature-grid.feature-grid{grid-template-columns:1fr!important}
+    }
+  </style>
 </head>
 <body data-page="home">
   <a class="skip-link" href="#main">Bỏ qua đến nội dung</a>
