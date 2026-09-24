@@ -111,19 +111,47 @@ const feature=features.find(item=>item.id===featureId);
 if(feature)feature.commands.push(...commands);
 });
 const updates=[{id:'03',date:'23/09/2026',current:true,items:[['⚙️ End Permission & End All','/endpermission allow|deny cho phép member thường dùng nút Win/Lose/End. /end all kết thúc mọi phiên War/Backup đang chạy.'],['🛡️ Security Module hoàn chỉnh','Anti-Nuke, Anti-Raid, Anti-Spam, Bot-Watch, Auto-Lockdown / Auto-Restore, whitelist và Trusted Admin.'],['🛠️ Info Slash & Prefix riêng server','Thêm /serverinfo, /userinfo, !prefix và /bot-config mở rộng cho role/kênh.']]},{id:'02',date:'22/09/2026',items:[['🛡️ Moderation & Security','Moderation gồm /ban, /kick, /mute, /unmute, /unban và các lệnh cấu hình Security.'],['🛠️ Others','Gộp info, prefix, language, help và log vào nhóm tiện ích.']]},{id:'01',date:'19/09/2026',items:[['ℹ️ !info','Phiên bản prefix của /info với bảng thông tin bot đầy đủ.'],['🔧 Prefix riêng từng server','Prefix mặc định ! và được lưu độc lập theo từng Guild.']]}];
-let activeCategory='all';let lastFocused=null;
+let activeCategory='all';let lastFocused=null;let showAllCommands=false;
 function typeClass(type){return 'tag-'+type}function typeLabel(type){return type==='both'?'BOTH':type.toUpperCase()}
 function renderFeatures(){const grid=$('#feature-grid');if(!grid)return;grid.innerHTML=features.map((f,i)=>`<article class="feature-card glass reveal" data-feature="${f.id}" style="--delay:${i*60}ms"><div class="feature-icon">${f.icon}</div><h3>${f.title}</h3><p>${f.short}</p><div class="feature-meta"><span>${f.commands.length + 4} lệnh</span><span>Xem chi tiết →</span></div></article>`).join('');bindFeatures();observeReveals()}
-function renderChips(){const el=$('#category-chips');if(!el)return;el.innerHTML=[['all','Tất cả'],...features.map(f=>[f.id,f.title])].map(([id,label])=>`<button class="chip ${id===activeCategory?'active':''}" data-category="${id}">${label}</button>`).join('');$$('.chip',el).forEach(button=>button.addEventListener('click',()=>{activeCategory=button.dataset.category;renderChips();renderCommands()}))}
+function renderChips(){const el=$('#category-chips');if(!el)return;el.innerHTML=[['all','Tất cả'],...features.map(f=>[f.id,f.title])].map(([id,label])=>`<button class="chip ${id===activeCategory?'active':''}" data-category="${id}">${label}</button>`).join('');$$('.chip',el).forEach(button=>button.addEventListener('click',()=>{activeCategory=button.dataset.category;showAllCommands=false;renderChips();renderCommands()}))}
 function allCommands(){return features.flatMap(f=>f.commands.map(command=>({feature:f.id,featureTitle:f.title,icon:f.icon,name:command[0],type:command[1],description:command[2],perm:command[3]})))}
-function renderCommands(){const list=$('#command-list');if(!list)return;const query=($('#command-search')?.value||'').toLowerCase().trim();const commands=allCommands().filter(c=>(activeCategory==='all'||c.feature===activeCategory)&&(!query||`${c.name} ${c.description} ${c.featureTitle}`.toLowerCase().includes(query)));list.innerHTML=commands.map(c=>`<article class="command-card"><div><div class="command-name">${c.icon} ${c.name}</div><div class="command-description">${c.description}</div><span class="tag ${typeClass(c.type)}">${typeLabel(c.type)} · ${c.featureTitle}</span></div><div class="command-perm">${c.perm}</div></article>`).join('');$('#no-results').hidden=commands.length>0;$('#clear-search').classList.toggle('visible',Boolean(query))}
+function renderCommands(){
+  const list=$('#command-list');
+  if(!list)return;
+  const query=($('#command-search')?.value||'').toLowerCase().trim();
+  const all=allCommands();
+  const filtered=all.filter(c=>(activeCategory==='all'||c.feature===activeCategory)&&(!query||`${c.name} ${c.description} ${c.featureTitle}`.toLowerCase().includes(query)));
+
+  // "Tất cả" + không search + chưa bấm Xem thêm → 7 ô + 1 ô Xem thêm = 8 ô
+  const collapse=activeCategory==='all'&&!query&&!showAllCommands;
+  const LIMIT=7;
+  const visible=collapse?filtered.slice(0,LIMIT):filtered;
+  const remaining=filtered.length-visible.length;
+
+  list.innerHTML=visible.map(c=>`<article class="command-card"><div><div class="command-name">${c.icon} ${c.name}</div><div class="command-description">${c.description}</div><span class="tag ${typeClass(c.type)}">${typeLabel(c.type)} · ${c.featureTitle}</span></div><div class="command-perm">${c.perm}</div></article>`).join('');
+
+  if(collapse&&remaining>0){
+    const more=document.createElement('button');
+    more.type='button';
+    more.id='show-more-commands';
+    more.className='command-card show-more-card';
+    more.setAttribute('aria-label','Xem thêm lệnh');
+    more.innerHTML=`<div><div class="command-name">＋ Xem thêm</div><div class="command-description">Còn ${remaining} lệnh chưa hiển thị.</div><span class="tag tag-both">ALL · Tất cả nhóm</span></div><div class="command-perm">Bấm để xem toàn bộ →</div>`;
+    more.addEventListener('click',()=>{showAllCommands=true;renderCommands()});
+    list.appendChild(more);
+  }
+
+  $('#no-results').hidden=filtered.length>0;
+  $('#clear-search').classList.toggle('visible',Boolean(query));
+}
 function renderHelp(){const preview=$('#help-preview');if(!preview)return;const f=features.find(item=>item.id===activeCategory)||features[0];preview.innerHTML=`<h3>${f.icon} ${f.title}</h3><p>${f.lead}</p><div class="help-command">${f.commands.slice(0,4).map(c=>`<code>${c[0]}</code>`).join('')}</div>`;const chips=$('#help-feature-chips');chips.innerHTML=features.map(f=>`<button class="chip ${f.id===features[0].id?'active':''}" data-help-feature="${f.id}">${f.title}</button>`).join('');$('#help-feature-result').innerHTML=`Try <code>!help ${features[0].id}</code> to see the full command set.`;$$('[data-help-feature]').forEach(button=>button.addEventListener('click',()=>{const item=features.find(f=>f.id===button.dataset.helpFeature);$$('[data-help-feature]').forEach(b=>b.classList.toggle('active',b===button));$('#help-feature-result').innerHTML=`<strong>${item.icon} ${item.title}</strong><br>${item.lead}<br><code>!help ${item.id}</code>`}))}
 function openFeature(id){const f=features.find(item=>item.id===id);if(!f)return;lastFocused=document.activeElement;$('#feature-modal-content').innerHTML=`<div class="modal-hero"><div class="feature-icon">${f.icon}</div><h2 id="feature-modal-title">${f.title}</h2><p>${f.lead}</p></div><div class="modal-section"><h3>Chi tiết</h3><ul>${f.details.map(item=>`<li>${item}</li>`).join('')}</ul></div><div class="modal-section"><h3>Lệnh</h3>${f.commands.map(c=>`<div class="modal-command"><strong>${c[0]} <span class="tag ${typeClass(c[1])}">${typeLabel(c[1])}</span></strong><p>${c[2]} · ${c[3]}</p></div>`).join('')}</div><div class="modal-section"><h3>Ví dụ</h3>${f.examples.map(item=>`<div class="example">${item}</div>`).join('')}</div><div class="modal-actions"><a class="btn btn-primary" href="${inviteUrl}" target="_blank" rel="noreferrer">Mời Nova ↗</a><a class="btn btn-glass" href="${supportUrl}" target="_blank" rel="noreferrer">Support Server</a></div>`;$('#feature-modal').hidden=false;document.body.style.overflow='hidden';$('.modal-close',$('#feature-modal')).focus()}
 function closeModal(id){const modal=$('#'+id);if(modal)modal.hidden=true;document.body.style.overflow='';if(lastFocused?.focus)lastFocused.focus()}
 function renderUpdates(){const body=$('#update-log-body');if(!body)return;body.innerHTML=updates.map(update=>`<article class="update-entry"><h3>UPDATE ${update.id}${update.current?'<span class="new-badge">MỚI</span>':''}</h3><time>${update.date}</time><ul>${update.items.map(item=>`<li><strong>${item[0]}</strong><br>${item[1]}</li>`).join('')}</ul></article>`).join('')}
 function bindFeatures(){$$('[data-feature]').forEach(card=>{card.addEventListener('click',()=>openFeature(card.dataset.feature));card.addEventListener('pointermove',event=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const rect=card.getBoundingClientRect();card.style.setProperty('--mx',`${event.clientX-rect.left}px`);card.style.setProperty('--my',`${event.clientY-rect.top}px`)})})}
 function observeReveals(){if(!('IntersectionObserver'in window)){$$('.reveal').forEach(el=>el.classList.add('in'));return}const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in');observer.unobserve(entry.target)}}),{threshold:.12});$$('.reveal').forEach(el=>observer.observe(el))}
-function setup(){renderFeatures();renderChips();renderCommands();renderHelp();renderUpdates();observeReveals();const stored=localStorage.getItem('nova-lang');if(stored==='en')document.querySelector('.language-switch')?.classList.add('en');$$('.lang-button').forEach(button=>button.addEventListener('click',()=>{localStorage.setItem('nova-lang',button.dataset.lang);$('.language-switch').classList.toggle('en',button.dataset.lang==='en')}));$('#command-search')?.addEventListener('input',renderCommands);$('#clear-search')?.addEventListener('click',()=>{$('#command-search').value='';renderCommands();$('#command-search').focus()});$$('[data-close]').forEach(button=>button.addEventListener('click',()=>closeModal(button.dataset.close)));$$('.modal-backdrop').forEach(backdrop=>backdrop.addEventListener('click',event=>{if(event.target===backdrop)closeModal(backdrop.id)}));document.addEventListener('keydown',event=>{if(event.key==='Escape')$$('.modal-backdrop').filter(m=>!m.hidden).forEach(m=>closeModal(m.id));});const toggle=$('.menu-toggle'),menu=$('.mobile-menu');toggle?.addEventListener('click',()=>{const open=menu.classList.toggle('open');toggle.setAttribute('aria-expanded',open);menu.setAttribute('aria-hidden',!open)});$$('.mobile-menu a').forEach(link=>link.addEventListener('click',()=>menu.classList.remove('open')));const sectionLinks=$$('.nav-link[href^="#"]');const sections=sectionLinks.map(link=>$(link.getAttribute('href'))).filter(Boolean);if(sections.length){const spy=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)sectionLinks.forEach(link=>link.classList.toggle('active',link.getAttribute('href')===`#${entry.target.id}`))}),{rootMargin:'-35% 0px -55%'});sections.forEach(section=>spy.observe(section))}if(document.body.dataset.page==='home'){const until=Number(localStorage.getItem('nova_update_log_snooze_until')||0);if(Date.now()>until)setTimeout(()=>{$('#update-modal').hidden=false},600);$('#snooze-updates')?.addEventListener('change',event=>{if(event.target.checked)localStorage.setItem('nova_update_log_snooze_until',String(Date.now()+86400000))})}}
+function setup(){renderFeatures();renderChips();renderCommands();renderHelp();renderUpdates();observeReveals();const stored=localStorage.getItem('nova-lang');if(stored==='en')document.querySelector('.language-switch')?.classList.add('en');$$('.lang-button').forEach(button=>button.addEventListener('click',()=>{localStorage.setItem('nova-lang',button.dataset.lang);$('.language-switch').classList.toggle('en',button.dataset.lang==='en')}));$('#command-search')?.addEventListener('input',()=>{showAllCommands=false;renderCommands()});$('#clear-search')?.addEventListener('click',()=>{$('#command-search').value='';showAllCommands=false;renderCommands();$('#command-search').focus()});$$('[data-close]').forEach(button=>button.addEventListener('click',()=>closeModal(button.dataset.close)));$$('.modal-backdrop').forEach(backdrop=>backdrop.addEventListener('click',event=>{if(event.target===backdrop)closeModal(backdrop.id)}));document.addEventListener('keydown',event=>{if(event.key==='Escape')$$('.modal-backdrop').filter(m=>!m.hidden).forEach(m=>closeModal(m.id));});const toggle=$('.menu-toggle'),menu=$('.mobile-menu');toggle?.addEventListener('click',()=>{const open=menu.classList.toggle('open');toggle.setAttribute('aria-expanded',open);menu.setAttribute('aria-hidden',!open)});$$('.mobile-menu a').forEach(link=>link.addEventListener('click',()=>menu.classList.remove('open')));const sectionLinks=$$('.nav-link[href^="#"]');const sections=sectionLinks.map(link=>$(link.getAttribute('href'))).filter(Boolean);if(sections.length){const spy=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)sectionLinks.forEach(link=>link.classList.toggle('active',link.getAttribute('href')===`#${entry.target.id}`))}),{rootMargin:'-35% 0px -55%'});sections.forEach(section=>spy.observe(section))}if(document.body.dataset.page==='home'){const until=Number(localStorage.getItem('nova_update_log_snooze_until')||0);if(Date.now()>until)setTimeout(()=>{$('#update-modal').hidden=false},600);$('#snooze-updates')?.addEventListener('change',event=>{if(event.target.checked)localStorage.setItem('nova_update_log_snooze_until',String(Date.now()+86400000))})}}
 window.addEventListener('DOMContentLoaded',setup);
 
 /* ============================================================
@@ -211,7 +239,6 @@ function applyLegalLang(pageKey, lang) {
   const data = LEGAL_COPY[pageKey]?.[lang];
   if (!data) return;
 
-  // Nav links (label thứ 4: Help ↔ Giúp đỡ)
   const navMap = [
     ['.nav-link[href="index.html"]', data.navLabels.home],
     ['.nav-link[href="index.html#features"]', data.navLabels.features],
@@ -225,7 +252,6 @@ function applyLegalLang(pageKey, lang) {
     if (el) el.textContent = text;
   });
 
-  // Doc content
   const doc = document.querySelector('.legal-doc');
   if (!doc) return;
   const h1 = doc.querySelector('h1');
@@ -257,7 +283,6 @@ function applyLegalLang(pageKey, lang) {
     if (btn) { btn.textContent = data.contact.btn; btn.href = data.contact.href; }
   }
 
-  // Footer link "Trang chủ" / "Home"
   const footerHomeLink = document.querySelector('.footer-bottom a[href="index.html"]');
   if (footerHomeLink) footerHomeLink.textContent = lang === 'en' ? 'Home' : 'Trang chủ';
 }
