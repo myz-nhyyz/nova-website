@@ -13,6 +13,7 @@ const features=[
 {id:'event',icon:'🏆',title:'Tạo event',short:'Tạo và quản lý sự kiện.',lead:'Gửi sự kiện, quản lý người tham gia và blacklist, tất cả qua nhóm lệnh /event.',details:['/event send và /event test.','Chỉnh sửa title và description.','Xem, đếm, xoá người tham gia.','Blacklist role bị chặn khỏi event.'],perms:['Manage Events','Manage Channels','Manager cho blacklist'],examples:['/event send','/event edit title','/event blacklist add role: @Banned'],commands:[['/event send','slash','Gửi và tạo sự kiện.','Manage Events'],['/event participants','slash','Xem danh sách người tham gia.','Manage Events'],['/event blacklist add|remove|list','slash','Quản lý role bị chặn.','Manager']]},
 {id:'others',icon:'🛠️',title:'Others',short:'Thông tin · Prefix · Language · Tiện ích.',lead:'Các lệnh tiện ích để xem thông tin, đổi prefix, đổi ngôn ngữ và mở Help Menu.',details:['/info, /serverinfo, /userinfo và phiên bản prefix.','!prefix đổi prefix riêng theo server.','/language đổi ngôn ngữ giao diện.','/help mở Help Menu theo danh mục.','!log xem lịch sử kick voice.'],perms:['Send Messages cho hầu hết lệnh','Administrator / Manage Server / Manage Channels cho !prefix'],examples:['/info','!prefix ?','/language vi','!help moderation'],commands:[['/info • !info','both','Xem thông tin bot.','Send Messages'],['/serverinfo • !serverinfo','both','Xem thông tin server.','Send Messages'],['!prefix','prefix','Xem hoặc đổi prefix riêng server.','Administrator / Manage Server'],['/help • !help','both','Mở Help Menu chính theo danh mục.','Send Messages']]}
 ];
+/* Cột 5 = 'new' → đánh dấu lệnh mới, hiện ✨MỚI / ✨NEW */
 const expandedCommands={
 ai:[
 ['/clearchat • !clearchat','both','Xoá lịch sử trò chuyện AI của bạn.','Send Messages'],
@@ -34,8 +35,8 @@ war:[
 ['/trust-list war','slash','Liệt kê người dùng có quyền War.','Server Owner'],
 ['/helppanel','slash','Di chuyển bảng Help Desk xuống cuối kênh.','Manager'],
 ['/callhacker show|hide','slash','Hiện hoặc ẩn nút Call hacker.','Manager'],
-['/war edit','slash','Chỉnh template kết quả WIN, LOSS, END.','Manager / Trusted'],
-['/backup edit','slash','Chỉnh template kết quả WIN, LOSS, END.','Manager / Trusted'],
+['/war edit','slash','Chỉnh template kết quả WIN, LOSS, END.','Manager / Trusted','new'],
+['/backup edit','slash','Chỉnh template kết quả WIN, LOSS, END.','Manager / Trusted','new'],
 ['/bot-config view','slash','Xem cấu hình War và Backup hiện tại.','Manager'],
 ['/bot-config help_channel','slash','Đổi kênh Help Desk.','Manager'],
 ['/bot-config war_ping_role','slash','Đổi role War Ping.','Manager'],
@@ -47,8 +48,8 @@ war:[
 event:[
 ['Join Event','button','Tham gia sự kiện từ bảng event.','Member'],
 ['End Event','button','Kết thúc sự kiện hiện tại.','Manage Server'],
-['/event create','slash','Tạo Giveaway/Gacha Event bằng form: nội dung, phần thưởng, thời gian kết thúc, banner.','Manage Events'],
-['/event draw <event_id>','slash','Quay gacha và công bố người thắng.','Manage Events'],
+['/event create','slash','Tạo Giveaway/Gacha Event bằng form: nội dung, phần thưởng, thời gian kết thúc, banner.','Manage Events','new'],
+['/event draw <event_id>','slash','Quay gacha và công bố người thắng.','Manage Events','new'],
 ['/event send','slash','Đăng bảng event vào kênh cố định.','Manage Server'],
 ['/event test','slash','Đăng bảng event thử trong kênh hiện tại.','Manage Server'],
 ['/event participants','slash','Liệt kê người đã tham gia.','Manage Server'],
@@ -64,7 +65,7 @@ moderation:[
 ['/kick user','slash','Kick thành viên khỏi server.','Server Owner'],
 ['/mute user duration','slash','Mute thành viên theo thời lượng.','Server Owner'],
 ['/ban user','slash','Ban thành viên khỏi server.','Server Owner'],
-['!purge <amount> • /purge <amount>','both','Xoá tin nhắn, tính cả tin nhắn lệnh. Slash hỗ trợ 1–1000 tin nhắn.','Manage Messages'],
+['!purge <amount> • /purge <amount>','both','Xoá tin nhắn, tính cả tin nhắn lệnh. Slash hỗ trợ 1–1000 tin nhắn.','Manage Messages','new'],
 ['/security','slash','Xem trạng thái Security.','Manager'],
 ['/toggle module state','slash','Bật hoặc tắt module Security.','Manager'],
 ['/threshold module action percent','slash','Đặt phần trăm tăng threshold cho action.','Manager'],
@@ -110,10 +111,10 @@ others:[
 ['/language • !language','both','Đặt ngôn ngữ giao diện cá nhân.','Send Messages'],
 ['/help • !help','both','Mở Help Menu.','Send Messages'],
 ['!log kick|voicekick','prefix','Xem lịch sử voice-kick gần đây.','Send Messages'],
-['/announcement edit message|embed','slash','Soạn và lưu announcement vào database.','Manage Server'],
-['/announcement send','slash','Gửi draft dưới dạng Message hoặc Embed.','Manage Server'],
-['/announcement test send','slash','Test gửi draft dưới dạng Message hoặc Embed.','Manage Server'],
-['/timestamp','slash','Tạo mã <t:timestamp:f> để dùng trong Event. Tự động điền phút 0, hôm nay hoặc ngày kế tiếp nếu giờ đã qua.','Send Messages']
+['/announcement edit message|embed','slash','Soạn và lưu announcement vào database.','Manage Server','new'],
+['/announcement send','slash','Gửi draft dưới dạng Message hoặc Embed.','Manage Server','new'],
+['/announcement test send','slash','Test gửi draft dưới dạng Message hoặc Embed.','Manage Server','new'],
+['/timestamp','slash','Tạo mã <t:timestamp:f> để dùng trong Event. Tự động điền phút 0, hôm nay hoặc ngày kế tiếp nếu giờ đã qua.','Send Messages','new']
 ]};
 Object.entries(expandedCommands).forEach(([featureId,commands])=>{
 const feature=features.find(item=>item.id===featureId);
@@ -141,23 +142,31 @@ const updates=[
 ['🔧 Prefix riêng từng server','Prefix mặc định ! và được lưu độc lập theo từng Guild.']
 ]}];
 let activeCategory='all';let lastFocused=null;let showAllCommands=false;
+function newLabelText(){return (document.documentElement.lang||'vi')==='en'?'NEW':'MỚI'}
 function typeClass(type){return 'tag-'+type}function typeLabel(type){return type==='both'?'BOTH':type.toUpperCase()}
-function renderFeatures(){const grid=$('#feature-grid');if(!grid)return;grid.innerHTML=features.map((f,i)=>`<article class="feature-card glass reveal" data-feature="${f.id}" style="--delay:${i*60}ms"><div class="feature-icon">${f.icon}</div><h3>${f.title}</h3><p>${f.short}</p><div class="feature-meta"><span>${f.commands.length + 4} lệnh</span><span>Xem chi tiết →</span></div></article>`).join('');bindFeatures();observeReveals()}
+function renderFeatures(){const grid=$('#feature-grid');if(!grid)return;const lbl=newLabelText();grid.innerHTML=features.map((f,i)=>{const hasNew=f.commands.some(c=>c[4]==='new');const badge=hasNew?` <span class="new-badge">✨${lbl}</span>`:'';return `<article class="feature-card glass reveal" data-feature="${f.id}" style="${hasNew?'--new:1;':''}--delay:${i*60}ms"><div class="feature-icon">${f.icon}</div><h3>${f.title}${badge}</h3><p>${f.short}</p><div class="feature-meta"><span>${f.commands.length + 4} lệnh</span><span>Xem chi tiết →</span></div></article>`}).join('');bindFeatures();observeReveals()}
 function renderChips(){const el=$('#category-chips');if(!el)return;el.innerHTML=[['all','Tất cả'],...features.map(f=>[f.id,f.title])].map(([id,label])=>`<button class="chip ${id===activeCategory?'active':''}" data-category="${id}">${label}</button>`).join('');$$('.chip',el).forEach(button=>button.addEventListener('click',()=>{activeCategory=button.dataset.category;showAllCommands=false;renderChips();renderCommands()}))}
-function allCommands(){return features.flatMap(f=>f.commands.map(command=>({feature:f.id,featureTitle:f.title,icon:f.icon,name:command[0],type:command[1],description:command[2],perm:command[3]})))}
+function allCommands(){return features.flatMap(f=>f.commands.map(command=>({feature:f.id,featureTitle:f.title,icon:f.icon,name:command[0],type:command[1],description:command[2],perm:command[3],isNew:command[4]==='new'})))}
+function sortNewFirst(arr){return [...arr].sort((a,b)=>{const an=a.isNew?1:0,bn=b.isNew?1:0;return bn-an})}
 function renderCommands(){
   const list=$('#command-list');
   if(!list)return;
+  const lbl=newLabelText();
   const query=($('#command-search')?.value||'').toLowerCase().trim();
   const all=allCommands();
   const filtered=all.filter(c=>(activeCategory==='all'||c.feature===activeCategory)&&(!query||`${c.name} ${c.description} ${c.featureTitle}`.toLowerCase().includes(query)));
-
-  const collapse=activeCategory==='all'&&!query&&!showAllCommands;
+  const sorted=sortNewFirst(filtered);
+  const hasNew=sorted.some(c=>c.isNew);
+  // "Tất cả" + không search + chưa bấm Xem thêm + KHÔNG có lệnh mới → collapse 7 ô
+  const collapse=activeCategory==='all'&&!query&&!showAllCommands&&!hasNew;
   const LIMIT=7;
-  const visible=collapse?filtered.slice(0,LIMIT):filtered;
-  const remaining=filtered.length-visible.length;
+  const visible=collapse?sorted.slice(0,LIMIT):sorted;
+  const remaining=sorted.length-visible.length;
 
-  list.innerHTML=visible.map(c=>`<article class="command-card"><div><div class="command-name">${c.icon} ${c.name}</div><div class="command-description">${c.description}</div><span class="tag ${typeClass(c.type)}">${typeLabel(c.type)} · ${c.featureTitle}</span></div><div class="command-perm">${c.perm}</div></article>`).join('');
+  list.innerHTML=visible.map(c=>{
+    const badge=c.isNew?` <span class="new-badge">✨${lbl}</span>`:'';
+    return `<article class="command-card${c.isNew?' is-new':''}"><div><div class="command-name">${c.icon} ${c.name}${badge}</div><div class="command-description">${c.description}</div><span class="tag ${typeClass(c.type)}">${typeLabel(c.type)} · ${c.featureTitle}</span></div><div class="command-perm">${c.perm}</div></article>`;
+  }).join('');
 
   if(collapse&&remaining>0){
     const more=document.createElement('button');
@@ -170,11 +179,11 @@ function renderCommands(){
     list.appendChild(more);
   }
 
-  $('#no-results').hidden=filtered.length>0;
+  $('#no-results').hidden=sorted.length>0;
   $('#clear-search').classList.toggle('visible',Boolean(query));
 }
 function renderHelp(){const preview=$('#help-preview');if(!preview)return;const f=features.find(item=>item.id===activeCategory)||features[0];preview.innerHTML=`<h3>${f.icon} ${f.title}</h3><p>${f.lead}</p><div class="help-command">${f.commands.slice(0,4).map(c=>`<code>${c[0]}</code>`).join('')}</div>`;const chips=$('#help-feature-chips');chips.innerHTML=features.map(f=>`<button class="chip ${f.id===features[0].id?'active':''}" data-help-feature="${f.id}">${f.title}</button>`).join('');$('#help-feature-result').innerHTML=`Try <code>!help ${features[0].id}</code> to see the full command set.`;$$('[data-help-feature]').forEach(button=>button.addEventListener('click',()=>{const item=features.find(f=>f.id===button.dataset.helpFeature);$$('[data-help-feature]').forEach(b=>b.classList.toggle('active',b===button));$('#help-feature-result').innerHTML=`<strong>${item.icon} ${item.title}</strong><br>${item.lead}<br><code>!help ${item.id}</code>`}))}
-function openFeature(id){const f=features.find(item=>item.id===id);if(!f)return;lastFocused=document.activeElement;$('#feature-modal-content').innerHTML=`<div class="modal-hero"><div class="feature-icon">${f.icon}</div><h2 id="feature-modal-title">${f.title}</h2><p>${f.lead}</p></div><div class="modal-section"><h3>Chi tiết</h3><ul>${f.details.map(item=>`<li>${item}</li>`).join('')}</ul></div><div class="modal-section"><h3>Lệnh</h3>${f.commands.map(c=>`<div class="modal-command"><strong>${c[0]} <span class="tag ${typeClass(c[1])}">${typeLabel(c[1])}</span></strong><p>${c[2]} · ${c[3]}</p></div>`).join('')}</div><div class="modal-section"><h3>Ví dụ</h3>${f.examples.map(item=>`<div class="example">${item}</div>`).join('')}</div><div class="modal-actions"><a class="btn btn-primary" href="${inviteUrl}" target="_blank" rel="noreferrer">Mời Nova ↗</a><a class="btn btn-glass" href="${supportUrl}" target="_blank" rel="noreferrer">Support Server</a></div>`;$('#feature-modal').hidden=false;document.body.style.overflow='hidden';$('.modal-close',$('#feature-modal')).focus()}
+function openFeature(id){const f=features.find(item=>item.id===id);if(!f)return;const lbl=newLabelText();lastFocused=document.activeElement;const sortedCmds=[...f.commands].sort((a,b)=>{const an=a[4]==='new'?1:0,bn=b[4]==='new'?1:0;return bn-an});$('#feature-modal-content').innerHTML=`<div class="modal-hero"><div class="feature-icon">${f.icon}</div><h2 id="feature-modal-title">${f.title}</h2><p>${f.lead}</p></div><div class="modal-section"><h3>Chi tiết</h3><ul>${f.details.map(item=>`<li>${item}</li>`).join('')}</ul></div><div class="modal-section"><h3>Lệnh</h3>${sortedCmds.map(c=>{const badge=c[4]==='new'?` <span class="new-badge">✨${lbl}</span>`:'';return `<div class="modal-command"><strong>${c[0]}${badge} <span class="tag ${typeClass(c[1])}">${typeLabel(c[1])}</span></strong><p>${c[2]} · ${c[3]}</p></div>`}).join('')}</div><div class="modal-section"><h3>Ví dụ</h3>${f.examples.map(item=>`<div class="example">${item}</div>`).join('')}</div><div class="modal-actions"><a class="btn btn-primary" href="${inviteUrl}" target="_blank" rel="noreferrer">Mời Nova ↗</a><a class="btn btn-glass" href="${supportUrl}" target="_blank" rel="noreferrer">Support Server</a></div>`;$('#feature-modal').hidden=false;document.body.style.overflow='hidden';$('.modal-close',$('#feature-modal')).focus()}
 function closeModal(id){const modal=$('#'+id);if(modal)modal.hidden=true;document.body.style.overflow='';if(lastFocused?.focus)lastFocused.focus()}
 function renderUpdates(){const body=$('#update-log-body');if(!body)return;body.innerHTML=updates.map(update=>`<article class="update-entry"><h3>UPDATE ${update.id}${update.current?'<span class="new-badge">MỚI</span>':''}</h3><time>${update.date}</time><ul>${update.items.map(item=>`<li><strong>${item[0]}</strong><br>${item[1]}</li>`).join('')}</ul></article>`).join('')}
 function bindFeatures(){$$('[data-feature]').forEach(card=>{card.addEventListener('click',()=>openFeature(card.dataset.feature));card.addEventListener('pointermove',event=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const rect=card.getBoundingClientRect();card.style.setProperty('--mx',`${event.clientX-rect.left}px`);card.style.setProperty('--my',`${event.clientY-rect.top}px`)})})}
