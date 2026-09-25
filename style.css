@@ -158,3 +158,13 @@ body[data-page="legal"] .footer-bottom span:last-child a[href="index.html"]:hove
   background:linear-gradient(160deg,rgba(255,209,102,.14),rgba(255,209,102,.04));
 }
 .modal-command .new-badge{margin-left:6px;vertical-align:middle}
+/* Nút "Ẩn đi" — khác màu với Xem thêm */
+.command-card.hide-more-card{
+  border-color:rgba(255,128,109,.45);
+  background:linear-gradient(160deg,rgba(255,128,109,.1),rgba(255,128,109,.03));
+}
+.command-card.hide-more-card:hover{
+  border-color:#ff806d;
+  background:linear-gradient(160deg,rgba(255,128,109,.18),rgba(255,128,109,.06));
+}
+.command-card.hide-more-card .command-name{color:#ff806d}
