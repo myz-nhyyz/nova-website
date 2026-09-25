@@ -168,3 +168,33 @@ body[data-page="legal"] .footer-bottom span:last-child a[href="index.html"]:hove
   background:linear-gradient(160deg,rgba(255,128,109,.18),rgba(255,128,109,.06));
 }
 .command-card.hide-more-card .command-name{color:#ff806d}
+/* ============================================================
+   FIX: Heading không còn dính chữ, dấu tiếng Việt không đè
+   ============================================================ */
+.section-heading h2,
+.section-heading>div>h2,
+.hero h1,
+.legal-doc h1{
+  letter-spacing:.02em!important;
+  line-height:1.08!important;
+  word-spacing:.06em!important;
+}
+.section-heading h2{
+  font-size:clamp(36px,5vw,66px)!important;
+}
+.legal-doc h1{
+  line-height:1.02!important;
+  letter-spacing:.01em!important;
+}
+.hero h1{
+  line-height:1!important;
+  letter-spacing:.03em!important;
+}
+/* Mobile: thu nhỏ thêm cho khỏi tràn */
+@media (max-width:760px){
+  .section-heading h2{font-size:clamp(30px,8vw,46px)!important;line-height:1.12!important}
+  .hero h1{font-size:clamp(64px,20vw,120px)!important}
+}
+@media (max-width:480px){
+  .section-heading h2{font-size:clamp(26px,9vw,38px)!important}
+}
