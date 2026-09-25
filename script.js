@@ -13,7 +13,6 @@ const features=[
 {id:'event',icon:'🏆',title:'Tạo event',short:'Tạo và quản lý sự kiện.',lead:'Gửi sự kiện, quản lý người tham gia và blacklist, tất cả qua nhóm lệnh /event.',details:['/event send và /event test.','Chỉnh sửa title và description.','Xem, đếm, xoá người tham gia.','Blacklist role bị chặn khỏi event.'],perms:['Manage Events','Manage Channels','Manager cho blacklist'],examples:['/event send','/event edit title','/event blacklist add role: @Banned'],commands:[['/event send','slash','Gửi và tạo sự kiện.','Manage Events'],['/event participants','slash','Xem danh sách người tham gia.','Manage Events'],['/event blacklist add|remove|list','slash','Quản lý role bị chặn.','Manager']]},
 {id:'others',icon:'🛠️',title:'Others',short:'Thông tin · Prefix · Language · Tiện ích.',lead:'Các lệnh tiện ích để xem thông tin, đổi prefix, đổi ngôn ngữ và mở Help Menu.',details:['/info, /serverinfo, /userinfo và phiên bản prefix.','!prefix đổi prefix riêng theo server.','/language đổi ngôn ngữ giao diện.','/help mở Help Menu theo danh mục.','!log xem lịch sử kick voice.'],perms:['Send Messages cho hầu hết lệnh','Administrator / Manage Server / Manage Channels cho !prefix'],examples:['/info','!prefix ?','/language vi','!help moderation'],commands:[['/info • !info','both','Xem thông tin bot.','Send Messages'],['/serverinfo • !serverinfo','both','Xem thông tin server.','Send Messages'],['!prefix','prefix','Xem hoặc đổi prefix riêng server.','Administrator / Manage Server'],['/help • !help','both','Mở Help Menu chính theo danh mục.','Send Messages']]}
 ];
-/* Cột 5 = 'new' → đánh dấu lệnh mới, hiện ✨MỚI / ✨NEW */
 const expandedCommands={
 ai:[
 ['/clearchat • !clearchat','both','Xoá lịch sử trò chuyện AI của bạn.','Send Messages'],
@@ -156,9 +155,8 @@ function renderCommands(){
   const all=allCommands();
   const filtered=all.filter(c=>(activeCategory==='all'||c.feature===activeCategory)&&(!query||`${c.name} ${c.description} ${c.featureTitle}`.toLowerCase().includes(query)));
   const sorted=sortNewFirst(filtered);
-  const hasNew=sorted.some(c=>c.isNew);
-  // "Tất cả" + không search + chưa bấm Xem thêm + KHÔNG có lệnh mới → collapse 7 ô
-  const collapse=activeCategory==='all'&&!query&&!showAllCommands&&!hasNew;
+  // Chỉ collapse ở tab "Tất cả" + không search + chưa bấm Xem thêm
+  const collapse=activeCategory==='all'&&!query&&!showAllCommands;
   const LIMIT=7;
   const visible=collapse?sorted.slice(0,LIMIT):sorted;
   const remaining=sorted.length-visible.length;
@@ -168,6 +166,7 @@ function renderCommands(){
     return `<article class="command-card${c.isNew?' is-new':''}"><div><div class="command-name">${c.icon} ${c.name}${badge}</div><div class="command-description">${c.description}</div><span class="tag ${typeClass(c.type)}">${typeLabel(c.type)} · ${c.featureTitle}</span></div><div class="command-perm">${c.perm}</div></article>`;
   }).join('');
 
+  // Nút "Xem thêm" ở cuối khi đang collapse
   if(collapse&&remaining>0){
     const more=document.createElement('button');
     more.type='button';
@@ -179,6 +178,22 @@ function renderCommands(){
     list.appendChild(more);
   }
 
+  // Nút "Ẩn đi" ở cuối khi đã mở rộng
+  if(!collapse&&showAllCommands&&activeCategory==='all'&&!query){
+    const hide=document.createElement('button');
+    hide.type='button';
+    hide.id='hide-commands';
+    hide.className='command-card show-more-card hide-more-card';
+    hide.setAttribute('aria-label','Ẩn bớt lệnh');
+    hide.innerHTML=`<div><div class="command-name">－ Ẩn đi</div><div class="command-description">Thu gọn danh sách về 7 lệnh đầu.</div><span class="tag tag-both">ALL · Tất cả nhóm</span></div><div class="command-perm">Bấm để ẩn bớt ↑</div>`;
+    hide.addEventListener('click',()=>{
+      showAllCommands=false;
+      renderCommands();
+      document.getElementById('command-list')?.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+    list.appendChild(hide);
+  }
+
   $('#no-results').hidden=sorted.length>0;
   $('#clear-search').classList.toggle('visible',Boolean(query));
 }
@@ -188,7 +203,7 @@ function closeModal(id){const modal=$('#'+id);if(modal)modal.hidden=true;documen
 function renderUpdates(){const body=$('#update-log-body');if(!body)return;body.innerHTML=updates.map(update=>`<article class="update-entry"><h3>UPDATE ${update.id}${update.current?'<span class="new-badge">MỚI</span>':''}</h3><time>${update.date}</time><ul>${update.items.map(item=>`<li><strong>${item[0]}</strong><br>${item[1]}</li>`).join('')}</ul></article>`).join('')}
 function bindFeatures(){$$('[data-feature]').forEach(card=>{card.addEventListener('click',()=>openFeature(card.dataset.feature));card.addEventListener('pointermove',event=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const rect=card.getBoundingClientRect();card.style.setProperty('--mx',`${event.clientX-rect.left}px`);card.style.setProperty('--my',`${event.clientY-rect.top}px`)})})}
 function observeReveals(){if(!('IntersectionObserver'in window)){$$('.reveal').forEach(el=>el.classList.add('in'));return}const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('in');observer.unobserve(entry.target)}}),{threshold:.12});$$('.reveal').forEach(el=>observer.observe(el))}
-function setup(){renderFeatures();renderChips();renderCommands();renderHelp();renderUpdates();observeReveals();const stored=localStorage.getItem('nova-lang');if(stored==='en')document.querySelector('.language-switch')?.classList.add('en');$$('.lang-button').forEach(button=>button.addEventListener('click',()=>{localStorage.setItem('nova-lang',button.dataset.lang);$('.language-switch').classList.toggle('en',button.dataset.lang==='en')}));$('#command-search')?.addEventListener('input',()=>{showAllCommands=false;renderCommands()});$('#clear-search')?.addEventListener('click',()=>{$('#command-search').value='';showAllCommands=false;renderCommands();$('#command-search').focus()});$$('[data-close]').forEach(button=>button.addEventListener('click',()=>closeModal(button.dataset.close)));$$('.modal-backdrop').forEach(backdrop=>backdrop.addEventListener('click',event=>{if(event.target===backdrop)closeModal(backdrop.id)}));document.addEventListener('keydown',event=>{if(event.key==='Escape')$$('.modal-backdrop').filter(m=>!m.hidden).forEach(m=>closeModal(m.id));});const toggle=$('.menu-toggle'),menu=$('.mobile-menu');toggle?.addEventListener('click',()=>{const open=menu.classList.toggle('open');toggle.setAttribute('aria-expanded',open);menu.setAttribute('aria-hidden',!open)});$$('.mobile-menu a').forEach(link=>link.addEventListener('click',()=>menu.classList.remove('open')));const sectionLinks=$$('.nav-link[href^="#"]');const sections=sectionLinks.map(link=>$(link.getAttribute('href'))).filter(Boolean);if(sections.length){const spy=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)sectionLinks.forEach(link=>link.classList.toggle('active',link.getAttribute('href')===`#${entry.target.id}`))}),{rootMargin:'-35% 0px -55%'});sections.forEach(section=>spy.observe(section))}if(document.body.dataset.page==='home'){const until=Number(localStorage.getItem('nova_update_log_snooze_until')||0);if(Date.now()>until)setTimeout(()=>{$('#update-modal').hidden=false},600);$('#snooze-updates')?.addEventListener('change',event=>{if(event.target.checked)localStorage.setItem('nova_update_log_snooze_until',String(Date.now()+86400000))})}}
+function setup(){renderFeatures();renderChips();renderCommands();renderHelp();renderUpdates();observeReveals();const stored=localStorage.getItem('nova-lang');if(stored==='en')document.querySelector('.language-switch')?.classList.add('en');$('#command-search')?.addEventListener('input',()=>{showAllCommands=false;renderCommands()});$('#clear-search')?.addEventListener('click',()=>{$('#command-search').value='';showAllCommands=false;renderCommands();$('#command-search').focus()});$$('[data-close]').forEach(button=>button.addEventListener('click',()=>closeModal(button.dataset.close)));$$('.modal-backdrop').forEach(backdrop=>backdrop.addEventListener('click',event=>{if(event.target===backdrop)closeModal(backdrop.id)}));document.addEventListener('keydown',event=>{if(event.key==='Escape')$$('.modal-backdrop').filter(m=>!m.hidden).forEach(m=>closeModal(m.id));});const toggle=$('.menu-toggle'),menu=$('.mobile-menu');toggle?.addEventListener('click',()=>{const open=menu.classList.toggle('open');toggle.setAttribute('aria-expanded',open);menu.setAttribute('aria-hidden',!open)});$$('.mobile-menu a').forEach(link=>link.addEventListener('click',()=>menu.classList.remove('open')));const sectionLinks=$$('.nav-link[href^="#"]');const sections=sectionLinks.map(link=>$(link.getAttribute('href'))).filter(Boolean);if(sections.length){const spy=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting)sectionLinks.forEach(link=>link.classList.toggle('active',link.getAttribute('href')===`#${entry.target.id}`))}),{rootMargin:'-35% 0px -55%'});sections.forEach(section=>spy.observe(section))}if(document.body.dataset.page==='home'){const until=Number(localStorage.getItem('nova_update_log_snooze_until')||0);if(Date.now()>until)setTimeout(()=>{$('#update-modal').hidden=false},600);$('#snooze-updates')?.addEventListener('change',event=>{if(event.target.checked)localStorage.setItem('nova_update_log_snooze_until',String(Date.now()+86400000))})}}
 window.addEventListener('DOMContentLoaded',setup);
 
 /* ============================================================
