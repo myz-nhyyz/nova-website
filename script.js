@@ -34,6 +34,8 @@ war:[
 ['/trust-list war','slash','Liệt kê người dùng có quyền War.','Server Owner'],
 ['/helppanel','slash','Di chuyển bảng Help Desk xuống cuối kênh.','Manager'],
 ['/callhacker show|hide','slash','Hiện hoặc ẩn nút Call hacker.','Manager'],
+['/war edit','slash','Chỉnh template kết quả WIN, LOSS, END.','Manager / Trusted'],
+['/backup edit','slash','Chỉnh template kết quả WIN, LOSS, END.','Manager / Trusted'],
 ['/bot-config view','slash','Xem cấu hình War và Backup hiện tại.','Manager'],
 ['/bot-config help_channel','slash','Đổi kênh Help Desk.','Manager'],
 ['/bot-config war_ping_role','slash','Đổi role War Ping.','Manager'],
@@ -45,6 +47,8 @@ war:[
 event:[
 ['Join Event','button','Tham gia sự kiện từ bảng event.','Member'],
 ['End Event','button','Kết thúc sự kiện hiện tại.','Manage Server'],
+['/event create','slash','Tạo Giveaway/Gacha Event bằng form: nội dung, phần thưởng, thời gian kết thúc, banner.','Manage Events'],
+['/event draw <event_id>','slash','Quay gacha và công bố người thắng.','Manage Events'],
 ['/event send','slash','Đăng bảng event vào kênh cố định.','Manage Server'],
 ['/event test','slash','Đăng bảng event thử trong kênh hiện tại.','Manage Server'],
 ['/event participants','slash','Liệt kê người đã tham gia.','Manage Server'],
@@ -60,6 +64,7 @@ moderation:[
 ['/kick user','slash','Kick thành viên khỏi server.','Server Owner'],
 ['/mute user duration','slash','Mute thành viên theo thời lượng.','Server Owner'],
 ['/ban user','slash','Ban thành viên khỏi server.','Server Owner'],
+['!purge <amount> • /purge <amount>','both','Xoá tin nhắn, tính cả tin nhắn lệnh. Slash hỗ trợ 1–1000 tin nhắn.','Manage Messages'],
 ['/security','slash','Xem trạng thái Security.','Manager'],
 ['/toggle module state','slash','Bật hoặc tắt module Security.','Manager'],
 ['/threshold module action percent','slash','Đặt phần trăm tăng threshold cho action.','Manager'],
@@ -104,13 +109,37 @@ others:[
 ['!prefix','prefix','Xem hoặc đổi prefix riêng của server.','Administrator / Manage Server'],
 ['/language • !language','both','Đặt ngôn ngữ giao diện cá nhân.','Send Messages'],
 ['/help • !help','both','Mở Help Menu.','Send Messages'],
-['!log kick|voicekick','prefix','Xem lịch sử voice-kick gần đây.','Send Messages']
+['!log kick|voicekick','prefix','Xem lịch sử voice-kick gần đây.','Send Messages'],
+['/announcement edit message|embed','slash','Soạn và lưu announcement vào database.','Manage Server'],
+['/announcement send','slash','Gửi draft dưới dạng Message hoặc Embed.','Manage Server'],
+['/announcement test send','slash','Test gửi draft dưới dạng Message hoặc Embed.','Manage Server'],
+['/timestamp','slash','Tạo mã <t:timestamp:f> để dùng trong Event. Tự động điền phút 0, hôm nay hoặc ngày kế tiếp nếu giờ đã qua.','Send Messages']
 ]};
 Object.entries(expandedCommands).forEach(([featureId,commands])=>{
 const feature=features.find(item=>item.id===featureId);
 if(feature)feature.commands.push(...commands);
 });
-const updates=[{id:'03',date:'23/09/2026',current:true,items:[['⚙️ End Permission & End All','/endpermission allow|deny cho phép member thường dùng nút Win/Lose/End. /end all kết thúc mọi phiên War/Backup đang chạy.'],['🛡️ Security Module hoàn chỉnh','Anti-Nuke, Anti-Raid, Anti-Spam, Bot-Watch, Auto-Lockdown / Auto-Restore, whitelist và Trusted Admin.'],['🛠️ Info Slash & Prefix riêng server','Thêm /serverinfo, /userinfo, !prefix và /bot-config mở rộng cho role/kênh.']]},{id:'02',date:'22/09/2026',items:[['🛡️ Moderation & Security','Moderation gồm /ban, /kick, /mute, /unmute, /unban và các lệnh cấu hình Security.'],['🛠️ Others','Gộp info, prefix, language, help và log vào nhóm tiện ích.']]},{id:'01',date:'19/09/2026',items:[['ℹ️ !info','Phiên bản prefix của /info với bảng thông tin bot đầy đủ.'],['🔧 Prefix riêng từng server','Prefix mặc định ! và được lưu độc lập theo từng Guild.']]}];
+const updates=[
+{id:'04',date:'25/09/2026',current:true,items:[
+['🎉 Event Giveaway / Gacha','/event create — tạo Giveaway/Gacha Event bằng form: nhập nội dung, phần thưởng, thời gian kết thúc và banner. /event draw <event_id> — quay gacha và công bố người thắng. /event participants được giữ nguyên, không tạo trùng.'],
+['📢 Announcement','/announcement edit message|embed — soạn và lưu announcement vào database. /announcement send — gửi draft dưới dạng Message hoặc Embed. /announcement test send — test gửi draft dưới dạng Message hoặc Embed.'],
+['⚔️ War Ping / Backup Ping Template','/war edit — chỉnh template kết quả WIN, LOSS, END. /backup edit — chỉnh template kết quả WIN, LOSS, END.'],
+['⏱️ Timestamp','/timestamp — tạo mã <t:timestamp:f> để dùng trong thời gian Event. Hỗ trợ tự động điền phút 0, ngày hôm nay hoặc ngày kế tiếp nếu giờ đã qua.'],
+['🧹 Purge','!purge <amount> — xóa tin nhắn, tính cả tin nhắn lệnh. /purge <amount> — xóa từ 1 đến 1000 tin nhắn.']
+]},
+{id:'03',date:'23/09/2026',items:[
+['⚙️ End Permission & End All','/endpermission allow|deny cho phép member thường dùng nút Win/Lose/End. /end all kết thúc mọi phiên War/Backup đang chạy.'],
+['🛡️ Security Module hoàn chỉnh','Anti-Nuke, Anti-Raid, Anti-Spam, Bot-Watch, Auto-Lockdown / Auto-Restore, whitelist và Trusted Admin.'],
+['🛠️ Info Slash & Prefix riêng server','Thêm /serverinfo, /userinfo, !prefix và /bot-config mở rộng cho role/kênh.']
+]},
+{id:'02',date:'22/09/2026',items:[
+['🛡️ Moderation & Security','Moderation gồm /ban, /kick, /mute, /unmute, /unban và các lệnh cấu hình Security.'],
+['🛠️ Others','Gộp info, prefix, language, help và log vào nhóm tiện ích.']
+]},
+{id:'01',date:'19/09/2026',items:[
+['ℹ️ !info','Phiên bản prefix của /info với bảng thông tin bot đầy đủ.'],
+['🔧 Prefix riêng từng server','Prefix mặc định ! và được lưu độc lập theo từng Guild.']
+]}];
 let activeCategory='all';let lastFocused=null;let showAllCommands=false;
 function typeClass(type){return 'tag-'+type}function typeLabel(type){return type==='both'?'BOTH':type.toUpperCase()}
 function renderFeatures(){const grid=$('#feature-grid');if(!grid)return;grid.innerHTML=features.map((f,i)=>`<article class="feature-card glass reveal" data-feature="${f.id}" style="--delay:${i*60}ms"><div class="feature-icon">${f.icon}</div><h3>${f.title}</h3><p>${f.short}</p><div class="feature-meta"><span>${f.commands.length + 4} lệnh</span><span>Xem chi tiết →</span></div></article>`).join('');bindFeatures();observeReveals()}
@@ -123,7 +152,6 @@ function renderCommands(){
   const all=allCommands();
   const filtered=all.filter(c=>(activeCategory==='all'||c.feature===activeCategory)&&(!query||`${c.name} ${c.description} ${c.featureTitle}`.toLowerCase().includes(query)));
 
-  // "Tất cả" + không search + chưa bấm Xem thêm → 7 ô + 1 ô Xem thêm = 8 ô
   const collapse=activeCategory==='all'&&!query&&!showAllCommands;
   const LIMIT=7;
   const visible=collapse?filtered.slice(0,LIMIT):filtered;
@@ -156,7 +184,6 @@ window.addEventListener('DOMContentLoaded',setup);
 
 /* ============================================================
    Legal pages i18n — VI/EN dịch thật nội dung
-   (Không tạo hamburger, nav ngang do HTML lo)
    ============================================================ */
 const LEGAL_COPY = {
   privacy: {
