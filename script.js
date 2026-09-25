@@ -1,6 +1,170 @@
 const LANGUAGE_COPY={vi:{home:'Trang chủ',features:'Tính năng',commands:'Lệnh',help:'Help',privacy:'Privacy',terms:'Terms',invite:'Mời Nova',support:'Tham gia Support',explore:'Khám phá tính năng',hero:'AI thông minh, moderation vững vàng và những công cụ cộng đồng được gói gọn trong một bot.',capabilities:'Một bot, nhiều nhịp sống.',capabilitiesLead:'Nova được thiết kế để server vận hành rõ ràng hơn, an toàn hơn và vui hơn.',commandDeck:'Tìm đúng lệnh, thật nhanh.',commandLead:'Tra cứu command theo nhóm, type và quyền cần thiết.',helpTitle:'Help, nhưng có ngữ cảnh.',helpLead:'Chọn một nhóm để xem nhanh cách Nova hoạt động trong server của bạn.',search:'Tìm lệnh hoặc mô tả...',all:'Tất cả',details:'Xem chi tiết →',commandsCount:'lệnh',model:'Mô hình AI',owner:'Chủ sở hữu',groups:'Nhóm tính năng',ready:'Lệnh sẵn sàng'},en:{home:'Home',features:'Features',commands:'Commands',help:'Help',privacy:'Privacy',terms:'Terms',invite:'Invite Nova',support:'Join Support',explore:'Explore features',hero:'Smart AI, dependable moderation, and community tools packed into one focused Discord bot.',capabilities:'One bot. Many rhythms.',capabilitiesLead:'Nova gives your server a clearer, safer, more capable operating layer.',commandDeck:'Find the right command.',commandLead:'Browse commands by group, type, and required permission.',helpTitle:'Help with context.',helpLead:'Pick a group to see how Nova fits into your server.',search:'Search commands or descriptions...',all:'All',details:'View details →',commandsCount:'commands',model:'AI model',owner:'Owner',groups:'Feature groups',ready:'Ready commands'}};
 const FEATURE_EN={ai:['AI Chatbot','Talk to AI inside Discord.','Chat with Qwen3.7-max, private conversation history, image generation, and custom personas.'],moderation:['Moderation','Moderation + automated Security.','Core moderation combined with Anti-Nuke, Anti-Raid, Anti-Spam, Bot-Watch, and Auto-Lockdown.'],banzone:['Ban Zone','Multi-server protection with Ban/Mute modes.','Protect compromised channels with configured actions, per-server whitelists, and 24-hour cleanup.'],war:['War Ping / Backup','Coordinate War and Backup sessions.','Collect the right details, open coordination threads, and control sessions with action buttons.'],event:['Create events','Create and manage events.','Send events, manage participants, and maintain a blacklist through one command group.'],others:['Others','Info, Prefix, Language, and utilities.','Useful commands for bot/server info, server prefixes, language, help, and voice-kick logs.']};
-function setLanguage(lang){const copy=LANGUAGE_COPY[lang]||LANGUAGE_COPY.vi;document.documentElement.lang=lang;localStorage.setItem('nova-lang',lang);$('.language-switch')?.classList.toggle('en',lang==='en');$$('.lang-button').forEach(button=>button.classList.toggle('active',button.dataset.lang===lang));const textMap={'.nav-link[href="#home"]':copy.home,'.nav-link[href="#features"]':copy.features,'.nav-link[href="#commands"]':copy.commands,'.nav-link[href="#help"]':copy.help,'.nav-link[href="privacy-policy.html"]':copy.privacy,'.nav-link[href="terms-of-service.html"]':copy.terms,'.invite-nav':copy.invite,'.hero-subtitle':copy.hero,'.hero-actions .btn-ghost':copy.explore,'.section-heading h2':copy.capabilities,'.section-heading>p':copy.capabilitiesLead,'#command-search':copy.search};Object.entries(textMap).forEach(([selector,text])=>{const element=$(selector);if(element){if(element.matches('input'))element.placeholder=text;else element.textContent=text}});const headings=$$('.section-heading h2');if(headings[1])headings[1].textContent=copy.commandDeck;if(headings[2])headings[2].textContent=copy.helpTitle;const sectionLeads=$$('.section-heading>p');if(sectionLeads[1])sectionLeads[1].textContent=copy.commandLead;if(sectionLeads[2])sectionLeads[2].textContent=copy.helpLead;const statLabels=$$('.stat-label');[copy.model,copy.owner,copy.groups,copy.ready].forEach((label,index)=>{if(statLabels[index])statLabels[index].textContent=label});features.forEach(feature=>{if(!feature._vi)feature._vi={title:feature.title,short:feature.short,lead:feature.lead};if(lang==='en'){const english=FEATURE_EN[feature.id];feature.title=english[0];feature.short=english[1];feature.lead=english[2]}else{feature.title=feature._vi.title;feature.short=feature._vi.short;feature.lead=feature._vi.lead}});renderFeatures();renderChips();renderCommands();renderHelp();}
+
+/* ============================================================
+   UI labels động — đổi theo ngôn ngữ
+   ============================================================ */
+const UI_COPY={
+  vi:{details:'Chi tiết',commands:'Lệnh',examples:'Ví dụ',allChip:'Tất cả',showMoreTitle:'＋ Xem thêm',hideMoreTitle:'－ Ẩn đi',showMoreBody:n=>`Còn ${n} lệnh chưa hiển thị.`,showMoreHint:'Bấm để xem toàn bộ →',hideMoreBody:'Thu gọn danh sách về 7 lệnh đầu.',hideMoreHint:'Bấm để ẩn bớt ↑',allGroup:'ALL · Tất cả nhóm',noResults:'Không tìm thấy lệnh phù hợp.',modalInvite:'Mời Nova ↗',modalSupport:'Support Server'},
+  en:{details:'Details',commands:'Commands',examples:'Examples',allChip:'All',showMoreTitle:'＋ Show more',hideMoreTitle:'－ Hide',showMoreBody:n=>`${n} more commands hidden.`,showMoreHint:'Click to show all →',hideMoreBody:'Collapse list to first 7 commands.',hideMoreHint:'Click to hide ↑',allGroup:'ALL · All groups',noResults:'No matching commands found.',modalInvite:'Invite Nova ↗',modalSupport:'Support Server'}
+};
+function ui(){return UI_COPY[(document.documentElement.lang||'vi')==='en'?'en':'vi']}
+
+/* ============================================================
+   FEATURE FULL EN — dịch details / perms / examples
+   ============================================================ */
+const FEATURE_FULL_EN={
+  ai:{
+    details:['AI chat uses public Qwen3.7-max model.','Each user has their own conversation history.','Enable AI Channel via /setai or !setai.','Custom personas and vi/en language selection.','Generate AI images from text prompts.'],
+    perms:['Send Messages and Embed Links','Read Message History','Manage Channels for AI config'],
+    examples:['!chat Explain quicksort simply','?image a cat astronaut drinking coffee on Mars','!persona custom: Reply short and friendly']
+  },
+  moderation:{
+    details:['Trusted Admin grants Moderation + Security config.','/kick, /mute, /ban via Security moderation engine.','Whitelist users, roles and channels to bypass.','Backup roles/channels and Auto-Restore.','Module config for raid, spam and punishment.'],
+    perms:['Server Owner or Trusted Moderation','Security commands need Manager','Bot role higher than target'],
+    examples:['/trusted admin add user: @Helper','/mute user: @Noisy duration: 10m','/backup create']
+  },
+  banzone:{
+    details:['Each server has its own Ban Zone channel and mode.','Ban or Mute up to 28 days.','Auto-restore channel if Ban Zone deleted.','Whitelist per server.','Trusted Ban Zone manages config with Owner.'],
+    perms:['Manage Channels','Ban Members or Moderate Members depending on mode','Server Owner or Trusted Ban Zone'],
+    examples:['/setbanchannel value:true','/banzone mute duration:10m','/banwhitelist add @TrustedUser']
+  },
+  war:{
+    details:['Create War Ping or Backup Ping requests.','Buttons: WAR, BACKUP, WIN, LOSE, END.','/end all ends all running sessions.','Call Hacker and trusted users by permission group.','Configure roles and channels via /bot-config.'],
+    perms:['Manage Roles','Manage Channels/Threads','Manager for sensitive config'],
+    examples:['/end all','/endpermission allow','/bot-config view']
+  },
+  event:{
+    details:['/event send and /event test.','Edit title and description.','View, count, remove participants.','Blacklist roles blocked from event.'],
+    perms:['Manage Events','Manage Channels','Manager for blacklist'],
+    examples:['/event send','/event edit title','/event blacklist add role: @Banned']
+  },
+  others:{
+    details:['/info, /serverinfo, /userinfo and prefix variants.','!prefix changes per-server prefix.','/language changes interface language.','/help opens Help Menu by category.','!log views recent voice-kick logs.'],
+    perms:['Send Messages for most commands','Administrator / Manage Server / Manage Channels for !prefix'],
+    examples:['/info','!prefix ?','/language vi','!help moderation']
+  }
+};
+
+/* ============================================================
+   CMD_EN — dịch mô tả + quyền của lệnh
+   key = tên lệnh (command[0]), value = [desc_en, perm_en]
+   ============================================================ */
+const CMD_EN={
+'/chat • !chat':['Chat with AI in Discord.','Send Messages'],
+'/image • !image':['Generate AI images from text prompts.','Send Messages, Attach Files'],
+'/setai • !setai':['Toggle AI mode for the channel.','Manage Channels'],
+'/persona • !persona':['Change AI persona by preset or description.','Send Messages'],
+'/clearchat • !clearchat':['Clear your AI chat history.','Send Messages'],
+'/setai • !setai true|false':['Enable or disable AI for the current channel.','Manage Channels'],
+'/setsharedhistory • !setsharedhistory true|false':['Enable or disable shared AI history.','Manage Channels'],
+'/mypersona • !mypersona':['View your current persona.','Send Messages'],
+'/resetpersona • !resetpersona':['Reset persona to default.','Send Messages'],
+'/trusted admin add|remove|list':['Grant/revoke Moderation + Security permissions.','Server Owner'],
+'/ban • !ban':['Ban a member via Security moderation engine.','Owner / Trusted'],
+'/mute • !mute':['Timeout, fallback Muted Role per config.','Owner / Trusted'],
+'/security':['View Security status.','Manager'],
+'/trust @user permission':['Grant moderation, banzone, security, war, backup or all permissions.','Server Owner'],
+'/untrust @user permission':['Revoke trusted permission.','Server Owner'],
+'/trust-list permission':['List trusted users by permission.','Server Owner'],
+'/kick user':['Kick a member from the server.','Server Owner'],
+'/mute user duration':['Mute a member for a duration.','Server Owner'],
+'/ban user':['Ban a member from the server.','Server Owner'],
+'!purge <amount> • /purge <amount>':['Delete messages, including command message. Slash supports 1–1000 messages.','Manage Messages'],
+'/toggle module state':['Enable or disable a Security module.','Manager'],
+'/threshold module action percent':['Set threshold increase percent for an action.','Manager'],
+'/config module action percent':['Legacy alias of threshold.','Manager'],
+'/punishment module action duration':['Choose punishment: Ban, Kick, or Mute.','Manager'],
+'/fallback action':['Choose fallback action.','Manager'],
+'/post-punish mode':['Set how to reset or continue decay.','Manager'],
+'/decay interval amount':['Configure decay.','Manager'],
+'/mute-duration duration':['Set default mute duration.','Manager'],
+'/admin-mute-method method':['Choose admin mute method.','Manager'],
+'/setchannel type channel':['Set Security, Bot Watch, or Raid Alert channel.','Manager'],
+'/whitelist add user':['Add user to whitelist.','Manager'],
+'/whitelist remove user':['Remove user from whitelist.','Manager'],
+'/whitelist list':['View user whitelist.','Manager'],
+'/whitelist role action role':['Manage role whitelist.','Manager'],
+'/whitelist channel action channel':['Manage channel whitelist.','Manager'],
+'/raid-config account-age join-threshold window':['Configure Anti-Raid.','Manager'],
+'/spam-config similarity rate-count rate-seconds':['Configure Anti-Spam.','Manager'],
+'/language lang':['Change Security language.','Manager'],
+'/muted-role-name name':['Rename Muted Role.','Manager'],
+'/setup-mute-role role name':['Use or create Muted Role.','Manager'],
+'/unmute user':['Remove mute and restore saved roles.','Manager'],
+'/backup create':['Create role and channel backup.','Manager'],
+'/backup load backup-id':['Load backup after confirmation.','Manager'],
+'/backup info backup-id':['View backup info.','Manager'],
+'/backup list':['Browse backup list.','Manager'],
+'/backup status':['View latest load progress.','Manager'],
+'/backup delete backup-id':['Delete a backup.','Manager'],
+'/trusted banzone add|remove|list':['Grant or revoke Ban Zone permission.','Server Owner'],
+'/setbanchannel true|false • !setbanchannel':['Enable or disable Ban Zone.','Server Owner'],
+'/banzone ban • !banzone ban':['Enable Ban Mode.','Server Owner'],
+'/banzone mute duration • !banzone mute':['Enable Mute Mode with duration.','Server Owner'],
+'/banwhitelist add|remove|list':['Manage Ban Zone whitelist.','Server Owner'],
+'/bandebug user • !bandebug user':['Check Ban Zone processing conditions.','Bot Owner'],
+'WAR':['Open War request from Help Desk.','Configurable'],
+'BACKUP':['Open Backup request from Help Desk.','Configurable'],
+'JOIN':['Join running War or Backup session.','Member'],
+'HACKER SHOWED UP':['Report that hacker appeared in session.','Member'],
+'CALL HACKER':['Call hacker in running session.','Manager / Trusted'],
+'WIN • LOSE • END':['End session with result or close session.','Manager / Trusted'],
+'/trust @user war':['Grant War permission to user.','Server Owner'],
+'/untrust @user war':['Revoke user War permission.','Server Owner'],
+'/trust-list war':['List users with War permission.','Server Owner'],
+'/helppanel':['Move Help Desk panel to bottom of channel.','Manager'],
+'/callhacker show|hide':['Show or hide Call hacker button.','Manager'],
+'/war edit':['Edit WIN, LOSS, END result templates.','Manager / Trusted'],
+'/backup edit':['Edit WIN, LOSS, END result templates.','Manager / Trusted'],
+'/bot-config view':['View current War and Backup config.','Manager'],
+'/bot-config help_channel':['Change Help Desk channel.','Manager'],
+'/bot-config war_ping_role':['Change War Ping role.','Manager'],
+'/bot-config backup_ping_role':['Change Backup Ping role.','Manager'],
+'/bot-config joined_war_role':['Change War participant role.','Manager'],
+'/bot-config joined_backup_role':['Change Backup participant role.','Manager'],
+'/bot-config hacker_role':['Change hacker role.','Manager'],
+'Join Event':['Join event from event panel.','Member'],
+'End Event':['End current event.','Manage Server'],
+'/event create':['Create Giveaway/Gacha Event via form: content, reward, end time, and banner.','Manage Events'],
+'/event draw <event_id>':['Roll gacha and announce winners.','Manage Events'],
+'/event send':['Post event panel in fixed channel.','Manage Server'],
+'/event test':['Post test event panel in current channel.','Manage Server'],
+'/event participants':['List joined participants.','Manage Server'],
+'/event count':['View participant count.','Manage Server'],
+'/event remove':['Remove a user from participants.','Manage Server'],
+'/event clear':['Clear all participants.','Manage Server'],
+'/event blacklist add|remove|list':['Manage blocked roles for events.','Manage Server'],
+'/info • !info':['View full bot info.','Send Messages'],
+'/serverinfo • !serverinfo':['View current server info.','Send Messages'],
+'/userinfo user':['View user info.','Send Messages'],
+'!prefix':['View or change server custom prefix.','Administrator / Manage Server'],
+'/language • !language':['Set personal interface language.','Send Messages'],
+'/help • !help':['Open Help Menu.','Send Messages'],
+'!log kick|voicekick':['View recent voice-kick logs.','Send Messages'],
+'/announcement edit message|embed':['Compose and save announcement to database.','Manage Server'],
+'/announcement send':['Send draft as Message or Embed.','Manage Server'],
+'/announcement test send':['Test send draft as Message or Embed.','Manage Server'],
+'/timestamp':['Create <t:timestamp:f> code for Event timing. Auto-fills minute 0, today or next day if time passed.','Send Messages']
+};
+
+function setLanguage(lang){const copy=LANGUAGE_COPY[lang]||LANGUAGE_COPY.vi;document.documentElement.lang=lang;localStorage.setItem('nova-lang',lang);$('.language-switch')?.classList.toggle('en',lang==='en');$$('.lang-button').forEach(button=>button.classList.toggle('active',button.dataset.lang===lang));const textMap={'.nav-link[href="#home"]':copy.home,'.nav-link[href="#features"]':copy.features,'.nav-link[href="#commands"]':copy.commands,'.nav-link[href="#help"]':copy.help,'.nav-link[href="privacy-policy.html"]':copy.privacy,'.nav-link[href="terms-of-service.html"]':copy.terms,'.invite-nav':copy.invite,'.hero-subtitle':copy.hero,'.hero-actions .btn-ghost':copy.explore,'.section-heading h2':copy.capabilities,'.section-heading>p':copy.capabilitiesLead,'#command-search':copy.search};Object.entries(textMap).forEach(([selector,text])=>{const element=$(selector);if(element){if(element.matches('input'))element.placeholder=text;else element.textContent=text}});const headings=$$('.section-heading h2');if(headings[1])headings[1].textContent=copy.commandDeck;if(headings[2])headings[2].textContent=copy.helpTitle;const sectionLeads=$$('.section-heading>p');if(sectionLeads[1])sectionLeads[1].textContent=copy.commandLead;if(sectionLeads[2])sectionLeads[2].textContent=copy.helpLead;const statLabels=$$('.stat-label');[copy.model,copy.owner,copy.groups,copy.ready].forEach((label,index)=>{if(statLabels[index])statLabels[index].textContent=label});
+features.forEach(feature=>{
+  if(!feature._vi){
+    feature._vi={title:feature.title,short:feature.short,lead:feature.lead,details:[...feature.details],perms:[...feature.perms],examples:[...feature.examples],commands:feature.commands.map(c=>[...c])};
+  }
+  if(lang==='en'){
+    const e=FEATURE_EN[feature.id];const f=FEATURE_FULL_EN[feature.id];
+    feature.title=e[0];feature.short=e[1];feature.lead=e[2];
+    if(f){feature.details=[...f.details];feature.perms=[...f.perms];feature.examples=[...f.examples]}
+    feature.commands=feature._vi.commands.map(c=>{const en=CMD_EN[c[0]];return en?[c[0],c[1],en[0],en[1],c[4]]:[...c]});
+  } else {
+    feature.title=feature._vi.title;feature.short=feature._vi.short;feature.lead=feature._vi.lead;
+    feature.details=[...feature._vi.details];feature.perms=[...feature._vi.perms];feature.examples=[...feature._vi.examples];
+    feature.commands=feature._vi.commands.map(c=>[...c]);
+  }
+});
+renderFeatures();renderChips();renderCommands();renderHelp();}
 window.addEventListener('DOMContentLoaded',()=>{const initial=localStorage.getItem('nova-lang')==='en'?'en':'vi';setLanguage(initial);$$('.lang-button').forEach(button=>button.addEventListener('click',()=>setLanguage(button.dataset.lang)))});
 /* Nova static site: content, rendering and interaction layer. */
 const $=(selector,root=document)=>root.querySelector(selector);const $$=(selector,root=document)=>[...root.querySelectorAll(selector)];
@@ -115,90 +279,18 @@ others:[
 ['/announcement test send','slash','Test gửi draft dưới dạng Message hoặc Embed.','Manage Server','new'],
 ['/timestamp','slash','Tạo mã <t:timestamp:f> để dùng trong Event. Tự động điền phút 0, hôm nay hoặc ngày kế tiếp nếu giờ đã qua.','Send Messages','new']
 ]};
-Object.entries(expandedCommands).forEach(([featureId,commands])=>{
-const feature=features.find(item=>item.id===featureId);
-if(feature)feature.commands.push(...commands);
-});
-const updates=[
-{id:'04',date:'25/09/2026',current:true,items:[
-['🎉 Event Giveaway / Gacha','/event create — tạo Giveaway/Gacha Event bằng form: nhập nội dung, phần thưởng, thời gian kết thúc và banner. /event draw <event_id> — quay gacha và công bố người thắng. /event participants được giữ nguyên, không tạo trùng.'],
-['📢 Announcement','/announcement edit message|embed — soạn và lưu announcement vào database. /announcement send — gửi draft dưới dạng Message hoặc Embed. /announcement test send — test gửi draft dưới dạng Message hoặc Embed.'],
-['⚔️ War Ping / Backup Ping Template','/war edit — chỉnh template kết quả WIN, LOSS, END. /backup edit — chỉnh template kết quả WIN, LOSS, END.'],
-['⏱️ Timestamp','/timestamp — tạo mã <t:timestamp:f> để dùng trong thời gian Event. Hỗ trợ tự động điền phút 0, ngày hôm nay hoặc ngày kế tiếp nếu giờ đã qua.'],
-['🧹 Purge','!purge <amount> — xóa tin nhắn, tính cả tin nhắn lệnh. /purge <amount> — xóa từ 1 đến 1000 tin nhắn.']
-]},
-{id:'03',date:'23/09/2026',items:[
-['⚙️ End Permission & End All','/endpermission allow|deny cho phép member thường dùng nút Win/Lose/End. /end all kết thúc mọi phiên War/Backup đang chạy.'],
-['🛡️ Security Module hoàn chỉnh','Anti-Nuke, Anti-Raid, Anti-Spam, Bot-Watch, Auto-Lockdown / Auto-Restore, whitelist và Trusted Admin.'],
-['🛠️ Info Slash & Prefix riêng server','Thêm /serverinfo, /userinfo, !prefix và /bot-config mở rộng cho role/kênh.']
-]},
-{id:'02',date:'22/09/2026',items:[
-['🛡️ Moderation & Security','Moderation gồm /ban, /kick, /mute, /unmute, /unban và các lệnh cấu hình Security.'],
-['🛠️ Others','Gộp info, prefix, language, help và log vào nhóm tiện ích.']
-]},
-{id:'01',date:'19/09/2026',items:[
-['ℹ️ !info','Phiên bản prefix của /info với bảng thông tin bot đầy đủ.'],
-['🔧 Prefix riêng từng server','Prefix mặc định ! và được lưu độc lập theo từng Guild.']
-]}];
+Object.entries(expandedCommands).forEach(([featureId,commands])=>{const feature=features.find(item=>item.id===featureId);if(feature)feature.commands.push(...commands)});
+const updates=[{id:'04',date:'25/09/2026',current:true,items:[['🎉 Event Giveaway / Gacha','/event create — tạo Giveaway/Gacha Event bằng form: nhập nội dung, phần thưởng, thời gian kết thúc và banner. /event draw <event_id> — quay gacha và công bố người thắng. /event participants được giữ nguyên, không tạo trùng.'],['📢 Announcement','/announcement edit message|embed — soạn và lưu announcement vào database. /announcement send — gửi draft dưới dạng Message hoặc Embed. /announcement test send — test gửi draft dưới dạng Message hoặc Embed.'],['⚔️ War Ping / Backup Ping Template','/war edit — chỉnh template kết quả WIN, LOSS, END. /backup edit — chỉnh template kết quả WIN, LOSS, END.'],['⏱️ Timestamp','/timestamp — tạo mã <t:timestamp:f> để dùng trong thời gian Event. Hỗ trợ tự động điền phút 0, ngày hôm nay hoặc ngày kế tiếp nếu giờ đã qua.'],['🧹 Purge','!purge <amount> — xóa tin nhắn, tính cả tin nhắn lệnh. /purge <amount> — xóa từ 1 đến 1000 tin nhắn.']]},{id:'03',date:'23/09/2026',items:[['⚙️ End Permission & End All','/endpermission allow|deny cho phép member thường dùng nút Win/Lose/End. /end all kết thúc mọi phiên War/Backup đang chạy.'],['🛡️ Security Module hoàn chỉnh','Anti-Nuke, Anti-Raid, Anti-Spam, Bot-Watch, Auto-Lockdown / Auto-Restore, whitelist và Trusted Admin.'],['🛠️ Info Slash & Prefix riêng server','Thêm /serverinfo, /userinfo, !prefix và /bot-config mở rộng cho role/kênh.']]},{id:'02',date:'22/09/2026',items:[['🛡️ Moderation & Security','Moderation gồm /ban, /kick, /mute, /unmute, /unban và các lệnh cấu hình Security.'],['🛠️ Others','Gộp info, prefix, language, help và log vào nhóm tiện ích.']]},{id:'01',date:'19/09/2026',items:[['ℹ️ !info','Phiên bản prefix của /info với bảng thông tin bot đầy đủ.'],['🔧 Prefix riêng từng server','Prefix mặc định ! và được lưu độc lập theo từng Guild.']]}];
 let activeCategory='all';let lastFocused=null;let showAllCommands=false;
 function newLabelText(){return (document.documentElement.lang||'vi')==='en'?'NEW':'MỚI'}
 function typeClass(type){return 'tag-'+type}function typeLabel(type){return type==='both'?'BOTH':type.toUpperCase()}
-function renderFeatures(){const grid=$('#feature-grid');if(!grid)return;const lbl=newLabelText();grid.innerHTML=features.map((f,i)=>{const hasNew=f.commands.some(c=>c[4]==='new');const badge=hasNew?` <span class="new-badge">✨${lbl}</span>`:'';return `<article class="feature-card glass reveal" data-feature="${f.id}" style="${hasNew?'--new:1;':''}--delay:${i*60}ms"><div class="feature-icon">${f.icon}</div><h3>${f.title}${badge}</h3><p>${f.short}</p><div class="feature-meta"><span>${f.commands.length + 4} lệnh</span><span>Xem chi tiết →</span></div></article>`}).join('');bindFeatures();observeReveals()}
-function renderChips(){const el=$('#category-chips');if(!el)return;el.innerHTML=[['all','Tất cả'],...features.map(f=>[f.id,f.title])].map(([id,label])=>`<button class="chip ${id===activeCategory?'active':''}" data-category="${id}">${label}</button>`).join('');$$('.chip',el).forEach(button=>button.addEventListener('click',()=>{activeCategory=button.dataset.category;showAllCommands=false;renderChips();renderCommands()}))}
+function renderFeatures(){const grid=$('#feature-grid');if(!grid)return;const lbl=newLabelText();grid.innerHTML=features.map((f,i)=>{const hasNew=f.commands.some(c=>c[4]==='new');const badge=hasNew?` <span class="new-badge">✨${lbl}</span>`:'';return `<article class="feature-card glass reveal" data-feature="${f.id}" style="${hasNew?'--new:1;':''}--delay:${i*60}ms"><div class="feature-icon">${f.icon}</div><h3>${f.title}${badge}</h3><p>${f.short}</p><div class="feature-meta"><span>${f.commands.length + 4} ${LANGUAGE_COPY[(document.documentElement.lang||'vi')==='en'?'en':'vi'].commandsCount}</span><span>${LANGUAGE_COPY[(document.documentElement.lang||'vi')==='en'?'en':'vi'].details}</span></div></article>`}).join('');bindFeatures();observeReveals()}
+function renderChips(){const el=$('#category-chips');if(!el)return;const L=LANGUAGE_COPY[(document.documentElement.lang||'vi')==='en'?'en':'vi'];el.innerHTML=[['all',L.all],...features.map(f=>[f.id,f.title])].map(([id,label])=>`<button class="chip ${id===activeCategory?'active':''}" data-category="${id}">${label}</button>`).join('');$$('.chip',el).forEach(button=>button.addEventListener('click',()=>{activeCategory=button.dataset.category;showAllCommands=false;renderChips();renderCommands()}))}
 function allCommands(){return features.flatMap(f=>f.commands.map(command=>({feature:f.id,featureTitle:f.title,icon:f.icon,name:command[0],type:command[1],description:command[2],perm:command[3],isNew:command[4]==='new'})))}
 function sortNewFirst(arr){return [...arr].sort((a,b)=>{const an=a.isNew?1:0,bn=b.isNew?1:0;return bn-an})}
-function renderCommands(){
-  const list=$('#command-list');
-  if(!list)return;
-  const lbl=newLabelText();
-  const query=($('#command-search')?.value||'').toLowerCase().trim();
-  const all=allCommands();
-  const filtered=all.filter(c=>(activeCategory==='all'||c.feature===activeCategory)&&(!query||`${c.name} ${c.description} ${c.featureTitle}`.toLowerCase().includes(query)));
-  const sorted=sortNewFirst(filtered);
-  // Chỉ collapse ở tab "Tất cả" + không search + chưa bấm Xem thêm
-  const collapse=activeCategory==='all'&&!query&&!showAllCommands;
-  const LIMIT=7;
-  const visible=collapse?sorted.slice(0,LIMIT):sorted;
-  const remaining=sorted.length-visible.length;
-
-  list.innerHTML=visible.map(c=>{
-    const badge=c.isNew?` <span class="new-badge">✨${lbl}</span>`:'';
-    return `<article class="command-card${c.isNew?' is-new':''}"><div><div class="command-name">${c.icon} ${c.name}${badge}</div><div class="command-description">${c.description}</div><span class="tag ${typeClass(c.type)}">${typeLabel(c.type)} · ${c.featureTitle}</span></div><div class="command-perm">${c.perm}</div></article>`;
-  }).join('');
-
-  // Nút "Xem thêm" ở cuối khi đang collapse
-  if(collapse&&remaining>0){
-    const more=document.createElement('button');
-    more.type='button';
-    more.id='show-more-commands';
-    more.className='command-card show-more-card';
-    more.setAttribute('aria-label','Xem thêm lệnh');
-    more.innerHTML=`<div><div class="command-name">＋ Xem thêm</div><div class="command-description">Còn ${remaining} lệnh chưa hiển thị.</div><span class="tag tag-both">ALL · Tất cả nhóm</span></div><div class="command-perm">Bấm để xem toàn bộ →</div>`;
-    more.addEventListener('click',()=>{showAllCommands=true;renderCommands()});
-    list.appendChild(more);
-  }
-
-  // Nút "Ẩn đi" ở cuối khi đã mở rộng
-  if(!collapse&&showAllCommands&&activeCategory==='all'&&!query){
-    const hide=document.createElement('button');
-    hide.type='button';
-    hide.id='hide-commands';
-    hide.className='command-card show-more-card hide-more-card';
-    hide.setAttribute('aria-label','Ẩn bớt lệnh');
-    hide.innerHTML=`<div><div class="command-name">－ Ẩn đi</div><div class="command-description">Thu gọn danh sách về 7 lệnh đầu.</div><span class="tag tag-both">ALL · Tất cả nhóm</span></div><div class="command-perm">Bấm để ẩn bớt ↑</div>`;
-    hide.addEventListener('click',()=>{
-      showAllCommands=false;
-      renderCommands();
-      document.getElementById('command-list')?.scrollIntoView({behavior:'smooth',block:'start'});
-    });
-    list.appendChild(hide);
-  }
-
-  $('#no-results').hidden=sorted.length>0;
-  $('#clear-search').classList.toggle('visible',Boolean(query));
-}
+function renderCommands(){const list=$('#command-list');if(!list)return;const lbl=newLabelText();const u=ui();const query=($('#command-search')?.value||'').toLowerCase().trim();const all=allCommands();const filtered=all.filter(c=>(activeCategory==='all'||c.feature===activeCategory)&&(!query||`${c.name} ${c.description} ${c.featureTitle}`.toLowerCase().includes(query)));const sorted=sortNewFirst(filtered);const collapse=activeCategory==='all'&&!query&&!showAllCommands;const LIMIT=7;const visible=collapse?sorted.slice(0,LIMIT):sorted;const remaining=sorted.length-visible.length;list.innerHTML=visible.map(c=>{const badge=c.isNew?` <span class="new-badge">✨${lbl}</span>`:'';return `<article class="command-card${c.isNew?' is-new':''}"><div><div class="command-name">${c.icon} ${c.name}${badge}</div><div class="command-description">${c.description}</div><span class="tag ${typeClass(c.type)}">${typeLabel(c.type)} · ${c.featureTitle}</span></div><div class="command-perm">${c.perm}</div></article>`}).join('');if(collapse&&remaining>0){const more=document.createElement('button');more.type='button';more.id='show-more-commands';more.className='command-card show-more-card';more.setAttribute('aria-label',u.showMoreTitle);more.innerHTML=`<div><div class="command-name">${u.showMoreTitle}</div><div class="command-description">${u.showMoreBody(remaining)}</div><span class="tag tag-both">${u.allGroup}</span></div><div class="command-perm">${u.showMoreHint}</div>`;more.addEventListener('click',()=>{showAllCommands=true;renderCommands()});list.appendChild(more)}if(!collapse&&showAllCommands&&activeCategory==='all'&&!query){const hide=document.createElement('button');hide.type='button';hide.id='hide-commands';hide.className='command-card show-more-card hide-more-card';hide.setAttribute('aria-label',u.hideMoreTitle);hide.innerHTML=`<div><div class="command-name">${u.hideMoreTitle}</div><div class="command-description">${u.hideMoreBody}</div><span class="tag tag-both">${u.allGroup}</span></div><div class="command-perm">${u.hideMoreHint}</div>`;hide.addEventListener('click',()=>{showAllCommands=false;renderCommands();document.getElementById('command-list')?.scrollIntoView({behavior:'smooth',block:'start'})});list.appendChild(hide)}$('#no-results').hidden=sorted.length>0;$('#no-results').textContent=u.noResults;$('#clear-search').classList.toggle('visible',Boolean(query))}
 function renderHelp(){const preview=$('#help-preview');if(!preview)return;const f=features.find(item=>item.id===activeCategory)||features[0];preview.innerHTML=`<h3>${f.icon} ${f.title}</h3><p>${f.lead}</p><div class="help-command">${f.commands.slice(0,4).map(c=>`<code>${c[0]}</code>`).join('')}</div>`;const chips=$('#help-feature-chips');chips.innerHTML=features.map(f=>`<button class="chip ${f.id===features[0].id?'active':''}" data-help-feature="${f.id}">${f.title}</button>`).join('');$('#help-feature-result').innerHTML=`Try <code>!help ${features[0].id}</code> to see the full command set.`;$$('[data-help-feature]').forEach(button=>button.addEventListener('click',()=>{const item=features.find(f=>f.id===button.dataset.helpFeature);$$('[data-help-feature]').forEach(b=>b.classList.toggle('active',b===button));$('#help-feature-result').innerHTML=`<strong>${item.icon} ${item.title}</strong><br>${item.lead}<br><code>!help ${item.id}</code>`}))}
-function openFeature(id){const f=features.find(item=>item.id===id);if(!f)return;const lbl=newLabelText();lastFocused=document.activeElement;const sortedCmds=[...f.commands].sort((a,b)=>{const an=a[4]==='new'?1:0,bn=b[4]==='new'?1:0;return bn-an});$('#feature-modal-content').innerHTML=`<div class="modal-hero"><div class="feature-icon">${f.icon}</div><h2 id="feature-modal-title">${f.title}</h2><p>${f.lead}</p></div><div class="modal-section"><h3>Chi tiết</h3><ul>${f.details.map(item=>`<li>${item}</li>`).join('')}</ul></div><div class="modal-section"><h3>Lệnh</h3>${sortedCmds.map(c=>{const badge=c[4]==='new'?` <span class="new-badge">✨${lbl}</span>`:'';return `<div class="modal-command"><strong>${c[0]}${badge} <span class="tag ${typeClass(c[1])}">${typeLabel(c[1])}</span></strong><p>${c[2]} · ${c[3]}</p></div>`}).join('')}</div><div class="modal-section"><h3>Ví dụ</h3>${f.examples.map(item=>`<div class="example">${item}</div>`).join('')}</div><div class="modal-actions"><a class="btn btn-primary" href="${inviteUrl}" target="_blank" rel="noreferrer">Mời Nova ↗</a><a class="btn btn-glass" href="${supportUrl}" target="_blank" rel="noreferrer">Support Server</a></div>`;$('#feature-modal').hidden=false;document.body.style.overflow='hidden';$('.modal-close',$('#feature-modal')).focus()}
+function openFeature(id){const f=features.find(item=>item.id===id);if(!f)return;const lbl=newLabelText();const u=ui();lastFocused=document.activeElement;const sortedCmds=[...f.commands].sort((a,b)=>{const an=a[4]==='new'?1:0,bn=b[4]==='new'?1:0;return bn-an});$('#feature-modal-content').innerHTML=`<div class="modal-hero"><div class="feature-icon">${f.icon}</div><h2 id="feature-modal-title">${f.title}</h2><p>${f.lead}</p></div><div class="modal-section"><h3>${u.details}</h3><ul>${f.details.map(item=>`<li>${item}</li>`).join('')}</ul></div><div class="modal-section"><h3>${u.commands}</h3>${sortedCmds.map(c=>{const badge=c[4]==='new'?` <span class="new-badge">✨${lbl}</span>`:'';return `<div class="modal-command"><strong>${c[0]}${badge} <span class="tag ${typeClass(c[1])}">${typeLabel(c[1])}</span></strong><p>${c[2]} · ${c[3]}</p></div>`}).join('')}</div><div class="modal-section"><h3>${u.examples}</h3>${f.examples.map(item=>`<div class="example">${item}</div>`).join('')}</div><div class="modal-actions"><a class="btn btn-primary" href="${inviteUrl}" target="_blank" rel="noreferrer">${u.modalInvite}</a><a class="btn btn-glass" href="${supportUrl}" target="_blank" rel="noreferrer">${u.modalSupport}</a></div>`;$('#feature-modal').hidden=false;document.body.style.overflow='hidden';$('.modal-close',$('#feature-modal')).focus()}
 function closeModal(id){const modal=$('#'+id);if(modal)modal.hidden=true;document.body.style.overflow='';if(lastFocused?.focus)lastFocused.focus()}
 function renderUpdates(){const body=$('#update-log-body');if(!body)return;body.innerHTML=updates.map(update=>`<article class="update-entry"><h3>UPDATE ${update.id}${update.current?'<span class="new-badge">MỚI</span>':''}</h3><time>${update.date}</time><ul>${update.items.map(item=>`<li><strong>${item[0]}</strong><br>${item[1]}</li>`).join('')}</ul></article>`).join('')}
 function bindFeatures(){$$('[data-feature]').forEach(card=>{card.addEventListener('click',()=>openFeature(card.dataset.feature));card.addEventListener('pointermove',event=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const rect=card.getBoundingClientRect();card.style.setProperty('--mx',`${event.clientX-rect.left}px`);card.style.setProperty('--my',`${event.clientY-rect.top}px`)})})}
@@ -207,160 +299,8 @@ function setup(){renderFeatures();renderChips();renderCommands();renderHelp();re
 window.addEventListener('DOMContentLoaded',setup);
 
 /* ============================================================
-   Legal pages i18n — VI/EN dịch thật nội dung
+   Legal pages i18n
    ============================================================ */
-const LEGAL_COPY = {
-  privacy: {
-    vi: {
-      title: 'Privacy Policy',
-      intro: 'Chính sách này có hiệu lực từ ngày <strong>19/09/2026</strong> và mô tả cách Nova xử lý dữ liệu khi bạn sử dụng bot.',
-      navLabels: { home: 'Trang chủ', features: 'Tính năng', commands: 'Lệnh', help: 'Giúp đỡ', terms: 'Terms', privacy: 'Privacy' },
-      sections: [
-        { h: '1. Giới thiệu', p: 'Nova là Discord bot do <strong>nova_.inovation</strong> vận hành, cung cấp AI Chatbot, moderation, security, Ban Zone, War/Backup và Event tools.' },
-        { h: '2. Dữ liệu Nova có thể xử lý', p: 'Tuỳ tính năng được bật, Nova có thể xử lý ID người dùng và server, nội dung tin nhắn gửi đến AI, lịch sử AI, dữ liệu moderation, event, War/Backup, cấu hình server và prefix riêng.' },
-        { h: '3. Nhà cung cấp AI', p: 'AI công khai của Nova sử dụng <strong>Qwen3.7-max</strong>. Tạo ảnh dùng Cocolink là nhà cung cấp chính và Gemini làm dự phòng. Chỉ dữ liệu cần thiết cho yêu cầu được chuyển tiếp.' },
-        { h: '4. Lưu trữ tối thiểu', p: 'Nova chỉ giữ dữ liệu cần cho tính năng đang hoạt động. Bạn có thể xoá lịch sử AI bằng <code>!clearchat</code>. Cấu hình được giữ khi server còn sử dụng bot và có thể được chủ server yêu cầu xoá.' },
-        { h: '5. Bảo mật', p: 'Nova giới hạn quyền truy cập nội bộ, tách dữ liệu theo server và không lưu token Discord hoặc API key của người dùng.' },
-        { h: '6. Quyền của bạn', p: 'Bạn có quyền yêu cầu xem, sửa hoặc xoá dữ liệu liên quan đến mình; chủ server có thể yêu cầu xoá cấu hình. Hãy liên hệ qua email bên dưới.' },
-        { h: '7. Liên hệ', p: 'Nếu có câu hỏi về quyền riêng tư, gửi email đến <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a>.' }
-      ],
-      contact: { icon: '✦', strong: 'Cần trao đổi trực tiếp?', p: 'anhbao27072011@gmail.com', btn: 'Gửi email ↗', href: 'mailto:anhbao27072011@gmail.com' }
-    },
-    en: {
-      title: 'Privacy Policy',
-      intro: 'This policy is effective from <strong>19/09/2026</strong> and describes how Nova processes data when you use the bot.',
-      navLabels: { home: 'Home', features: 'Features', commands: 'Commands', help: 'Help', terms: 'Terms', privacy: 'Privacy' },
-      sections: [
-        { h: '1. Introduction', p: 'Nova is a Discord bot operated by <strong>nova_.inovation</strong>, providing AI Chatbot, moderation, security, Ban Zone, War/Backup and Event tools.' },
-        { h: '2. Data Nova may process', p: 'Depending on enabled features, Nova may process user and server IDs, messages sent to AI, AI history, moderation data, event data, War/Backup data, server configuration and custom prefixes.' },
-        { h: '3. AI providers', p: "Nova's public AI uses <strong>Qwen3.7-max</strong>. Image generation uses Cocolink as the primary provider and Gemini as fallback. Only data necessary for the request is forwarded." },
-        { h: '4. Minimal storage', p: "Nova only keeps data needed for active features. You can clear AI history with <code>!clearchat</code>. Configuration is kept while the server uses the bot and can be deleted at the owner's request." },
-        { h: '5. Security', p: 'Nova limits internal access, isolates data per server, and does not store Discord tokens or user API keys.' },
-        { h: '6. Your rights', p: 'You can request to view, modify or delete data related to you; server owners can request configuration deletion. Contact via the email below.' },
-        { h: '7. Contact', p: 'For privacy questions, email <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a>.' }
-      ],
-      contact: { icon: '✦', strong: 'Need to talk directly?', p: 'anhbao27072011@gmail.com', btn: 'Send email ↗', href: 'mailto:anhbao27072011@gmail.com' }
-    }
-  },
-  terms: {
-    vi: {
-      title: 'Terms of Service',
-      intro: 'Các điều khoản này có hiệu lực từ ngày <strong>19/09/2026</strong>. Khi mời hoặc sử dụng Nova, bạn đồng ý với các điều khoản sau.',
-      navLabels: { home: 'Trang chủ', features: 'Tính năng', commands: 'Lệnh', help: 'Giúp đỡ', terms: 'Terms', privacy: 'Privacy' },
-      sections: [
-        { h: '1. Mô tả dịch vụ', p: 'Nova cung cấp công cụ AI, moderation, security, Ban Zone, War/Backup và Event cho cộng đồng Discord.' },
-        { h: '2. Sử dụng hợp lệ', p: 'Bạn phải tuân thủ Discord Terms of Service, Community Guidelines, pháp luật hiện hành và các quy định riêng của server.' },
-        { h: '3. Hành vi bị cấm', p: 'Không dùng Nova để spam, raid, lạm dụng quyền, quấy rối, phát tán nội dung bất hợp pháp hoặc cố gắng phá hoại bot và server.' },
-        { h: '4. Trách nhiệm kiểm duyệt', p: 'Chủ server và đội ngũ quản trị chịu trách nhiệm cấu hình moderation, security, whitelist, role hierarchy và quyết định xử lý member.' },
-        { h: '5. Prefix riêng', p: 'Prefix được lưu theo từng server. Chỉ người có Administrator, Manage Server hoặc Manage Channels nên thay đổi prefix và cần thông báo cho thành viên.' },
-        { h: '6. Nội dung AI', p: 'Phản hồi AI có thể sai, thiếu hoặc không phù hợp. Hãy kiểm tra thông tin trước khi dựa vào đó để ra quyết định.' },
-        { h: '7. War, Backup và Event', p: 'Người dùng chịu trách nhiệm về lời mời, nội dung và hành vi trong các phiên War, Backup và Event do server tạo.' },
-        { h: '8. Ban Zone', p: 'Ban Zone là công cụ tự động có thể ban hoặc mute theo cấu hình. Hãy thiết lập whitelist, mode và role hierarchy cẩn thận.' },
-        { h: '9. Tính khả dụng', p: 'Nova được cung cấp theo tình trạng hiện có. Có thể xảy ra gián đoạn do bảo trì, giới hạn Discord hoặc dịch vụ phụ thuộc.' },
-        { h: '10. Thay đổi dịch vụ', p: 'Nova có thể được cập nhật, thêm, thay đổi hoặc loại bỏ tính năng. Update log sẽ ghi nhận các thay đổi quan trọng.' },
-        { h: '11. Tạm ngừng hoặc chấm dứt', p: 'Nova có thể hạn chế hoặc chấm dứt quyền sử dụng khi phát hiện lạm dụng, vi phạm điều khoản hoặc yêu cầu từ Discord.' },
-        { h: '12. Liên hệ', p: 'Liên hệ <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a> cho câu hỏi về điều khoản.' }
-      ],
-      contact: { icon: '↗', strong: 'Support server', p: 'discord.gg/qkyu3G6WMa', btn: 'Tham gia ↗', href: 'https://discord.gg/qkyu3G6WMa' }
-    },
-    en: {
-      title: 'Terms of Service',
-      intro: 'These terms are effective from <strong>19/09/2026</strong>. By inviting or using Nova, you agree to the following terms.',
-      navLabels: { home: 'Home', features: 'Features', commands: 'Commands', help: 'Help', terms: 'Terms', privacy: 'Privacy' },
-      sections: [
-        { h: '1. Service description', p: 'Nova provides AI, moderation, security, Ban Zone, War/Backup and Event tools for Discord communities.' },
-        { h: '2. Acceptable use', p: "You must comply with Discord Terms of Service, Community Guidelines, applicable laws, and your server's rules." },
-        { h: '3. Prohibited behavior', p: 'Do not use Nova for spam, raids, permission abuse, harassment, illegal content, or attempts to damage the bot or servers.' },
-        { h: '4. Moderation responsibility', p: 'Server owners and admins are responsible for configuring moderation, security, whitelist, role hierarchy, and handling members.' },
-        { h: '5. Custom prefix', p: 'Prefixes are stored per server. Only users with Administrator, Manage Server, or Manage Channels should change the prefix and should notify members.' },
-        { h: '6. AI content', p: 'AI responses may be incorrect, incomplete, or inappropriate. Verify information before making decisions based on it.' },
-        { h: '7. War, Backup and Events', p: 'Users are responsible for invitations, content, and behavior in War, Backup, and Event sessions created by the server.' },
-        { h: '8. Ban Zone', p: 'Ban Zone is an automated tool that can ban or mute according to configuration. Set up whitelist, mode, and role hierarchy carefully.' },
-        { h: '9. Availability', p: 'Nova is provided as-is. Interruptions may occur due to maintenance, Discord limits, or dependent services.' },
-        { h: '10. Service changes', p: 'Nova may be updated, added to, modified, or have features removed. The update log will record significant changes.' },
-        { h: '11. Suspension or termination', p: 'Nova may limit or terminate usage rights when abuse, term violations, or Discord requirements are detected.' },
-        { h: '12. Contact', p: 'Contact <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a> for questions about the terms.' }
-      ],
-      contact: { icon: '↗', strong: 'Support server', p: 'discord.gg/qkyu3G6WMa', btn: 'Join ↗', href: 'https://discord.gg/qkyu3G6WMa' }
-    }
-  }
-};
-
-function applyLegalLang(pageKey, lang) {
-  const data = LEGAL_COPY[pageKey]?.[lang];
-  if (!data) return;
-
-  const navMap = [
-    ['.nav-link[href="index.html"]', data.navLabels.home],
-    ['.nav-link[href="index.html#features"]', data.navLabels.features],
-    ['.nav-link[href="index.html#commands"]', data.navLabels.commands],
-    ['.nav-link[href="index.html#help"]', data.navLabels.help],
-    ['.nav-link[href="terms-of-service.html"]', data.navLabels.terms],
-    ['.nav-link[href="privacy-policy.html"]', data.navLabels.privacy]
-  ];
-  navMap.forEach(([sel, text]) => {
-    const el = document.querySelector(sel);
-    if (el) el.textContent = text;
-  });
-
-  const doc = document.querySelector('.legal-doc');
-  if (!doc) return;
-  const h1 = doc.querySelector('h1');
-  const intro = doc.querySelector('.legal-intro');
-  if (h1) h1.textContent = data.title;
-  if (intro) intro.innerHTML = data.intro;
-
-  doc.querySelectorAll('section').forEach(s => s.remove());
-  const contact = doc.querySelector('.contact-card');
-  data.sections.forEach(({ h, p }) => {
-    const sec = document.createElement('section');
-    const h2 = document.createElement('h2');
-    h2.textContent = h;
-    const pp = document.createElement('p');
-    pp.innerHTML = p;
-    sec.append(h2, pp);
-    if (contact) doc.insertBefore(sec, contact);
-    else doc.appendChild(sec);
-  });
-
-  if (contact) {
-    const icon = contact.querySelector('.contact-icon');
-    const strong = contact.querySelector('strong');
-    const para = contact.querySelector('p');
-    const btn = contact.querySelector('.btn');
-    if (icon) icon.textContent = data.contact.icon;
-    if (strong) strong.textContent = data.contact.strong;
-    if (para) para.textContent = data.contact.p;
-    if (btn) { btn.textContent = data.contact.btn; btn.href = data.contact.href; }
-  }
-
-  const footerHomeLink = document.querySelector('.footer-bottom a[href="index.html"]');
-  if (footerHomeLink) footerHomeLink.textContent = lang === 'en' ? 'Home' : 'Trang chủ';
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-  if (document.body.dataset.page !== 'legal') return;
-
-  const pageKey = location.pathname.includes('terms') ? 'terms' : 'privacy';
-  const actions = document.querySelector('.nav-actions');
-  if (!actions) return;
-
-  let lang = localStorage.getItem('nova-lang') === 'en' ? 'en' : 'vi';
-
-  function applyLang(next) {
-    lang = next;
-    localStorage.setItem('nova-lang', lang);
-    document.documentElement.lang = lang;
-    actions.querySelector('.language-switch')?.classList.toggle('en', lang === 'en');
-    actions.querySelectorAll('.lang-button').forEach(b => {
-      b.classList.toggle('active', b.dataset.lang === lang);
-    });
-    applyLegalLang(pageKey, lang);
-  }
-
-  applyLang(lang);
-
-  actions.querySelectorAll('.lang-button').forEach(btn => {
-    btn.addEventListener('click', () => applyLang(btn.dataset.lang));
-  });
-});
+const LEGAL_COPY={privacy:{vi:{title:'Privacy Policy',intro:'Chính sách này có hiệu lực từ ngày <strong>19/09/2026</strong> và mô tả cách Nova xử lý dữ liệu khi bạn sử dụng bot.',navLabels:{home:'Trang chủ',features:'Tính năng',commands:'Lệnh',help:'Giúp đỡ',terms:'Terms',privacy:'Privacy'},sections:[{h:'1. Giới thiệu',p:'Nova là Discord bot do <strong>nova_.inovation</strong> vận hành, cung cấp AI Chatbot, moderation, security, Ban Zone, War/Backup và Event tools.'},{h:'2. Dữ liệu Nova có thể xử lý',p:'Tuỳ tính năng được bật, Nova có thể xử lý ID người dùng và server, nội dung tin nhắn gửi đến AI, lịch sử AI, dữ liệu moderation, event, War/Backup, cấu hình server và prefix riêng.'},{h:'3. Nhà cung cấp AI',p:'AI công khai của Nova sử dụng <strong>Qwen3.7-max</strong>. Tạo ảnh dùng Cocolink là nhà cung cấp chính và Gemini làm dự phòng. Chỉ dữ liệu cần thiết cho yêu cầu được chuyển tiếp.'},{h:'4. Lưu trữ tối thiểu',p:'Nova chỉ giữ dữ liệu cần cho tính năng đang hoạt động. Bạn có thể xoá lịch sử AI bằng <code>!clearchat</code>. Cấu hình được giữ khi server còn sử dụng bot và có thể được chủ server yêu cầu xoá.'},{h:'5. Bảo mật',p:'Nova giới hạn quyền truy cập nội bộ, tách dữ liệu theo server và không lưu token Discord hoặc API key của người dùng.'},{h:'6. Quyền của bạn',p:'Bạn có quyền yêu cầu xem, sửa hoặc xoá dữ liệu liên quan đến mình; chủ server có thể yêu cầu xoá cấu hình. Hãy liên hệ qua email bên dưới.'},{h:'7. Liên hệ',p:'Nếu có câu hỏi về quyền riêng tư, gửi email đến <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a>.'}],contact:{icon:'✦',strong:'Cần trao đổi trực tiếp?',p:'anhbao27072011@gmail.com',btn:'Gửi email ↗',href:'mailto:anhbao27072011@gmail.com'}},en:{title:'Privacy Policy',intro:'This policy is effective from <strong>19/09/2026</strong> and describes how Nova processes data when you use the bot.',navLabels:{home:'Home',features:'Features',commands:'Commands',help:'Help',terms:'Terms',privacy:'Privacy'},sections:[{h:'1. Introduction',p:'Nova is a Discord bot operated by <strong>nova_.inovation</strong>, providing AI Chatbot, moderation, security, Ban Zone, War/Backup and Event tools.'},{h:'2. Data Nova may process',p:'Depending on enabled features, Nova may process user and server IDs, messages sent to AI, AI history, moderation data, event data, War/Backup data, server configuration and custom prefixes.'},{h:'3. AI providers',p:"Nova's public AI uses <strong>Qwen3.7-max</strong>. Image generation uses Cocolink as the primary provider and Gemini as fallback. Only data necessary for the request is forwarded."},{h:'4. Minimal storage',p:"Nova only keeps data needed for active features. You can clear AI history with <code>!clearchat</code>. Configuration is kept while the server uses the bot and can be deleted at the owner's request."},{h:'5. Security',p:'Nova limits internal access, isolates data per server, and does not store Discord tokens or user API keys.'},{h:'6. Your rights',p:'You can request to view, modify or delete data related to you; server owners can request configuration deletion. Contact via the email below.'},{h:'7. Contact',p:'For privacy questions, email <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a>.'}],contact:{icon:'✦',strong:'Need to talk directly?',p:'anhbao27072011@gmail.com',btn:'Send email ↗',href:'mailto:anhbao27072011@gmail.com'}}},terms:{vi:{title:'Terms of Service',intro:'Các điều khoản này có hiệu lực từ ngày <strong>19/09/2026</strong>. Khi mời hoặc sử dụng Nova, bạn đồng ý với các điều khoản sau.',navLabels:{home:'Trang chủ',features:'Tính năng',commands:'Lệnh',help:'Giúp đỡ',terms:'Terms',privacy:'Privacy'},sections:[{h:'1. Mô tả dịch vụ',p:'Nova cung cấp công cụ AI, moderation, security, Ban Zone, War/Backup và Event cho cộng đồng Discord.'},{h:'2. Sử dụng hợp lệ',p:'Bạn phải tuân thủ Discord Terms of Service, Community Guidelines, pháp luật hiện hành và các quy định riêng của server.'},{h:'3. Hành vi bị cấm',p:'Không dùng Nova để spam, raid, lạm dụng quyền, quấy rối, phát tán nội dung bất hợp pháp hoặc cố gắng phá hoại bot và server.'},{h:'4. Trách nhiệm kiểm duyệt',p:'Chủ server và đội ngũ quản trị chịu trách nhiệm cấu hình moderation, security, whitelist, role hierarchy và quyết định xử lý member.'},{h:'5. Prefix riêng',p:'Prefix được lưu theo từng server. Chỉ người có Administrator, Manage Server hoặc Manage Channels nên thay đổi prefix và cần thông báo cho thành viên.'},{h:'6. Nội dung AI',p:'Phản hồi AI có thể sai, thiếu hoặc không phù hợp. Hãy kiểm tra thông tin trước khi dựa vào đó để ra quyết định.'},{h:'7. War, Backup và Event',p:'Người dùng chịu trách nhiệm về lời mời, nội dung và hành vi trong các phiên War, Backup và Event do server tạo.'},{h:'8. Ban Zone',p:'Ban Zone là công cụ tự động có thể ban hoặc mute theo cấu hình. Hãy thiết lập whitelist, mode và role hierarchy cẩn thận.'},{h:'9. Tính khả dụng',p:'Nova được cung cấp theo tình trạng hiện có. Có thể xảy ra gián đoạn do bảo trì, giới hạn Discord hoặc dịch vụ phụ thuộc.'},{h:'10. Thay đổi dịch vụ',p:'Nova có thể được cập nhật, thêm, thay đổi hoặc loại bỏ tính năng. Update log sẽ ghi nhận các thay đổi quan trọng.'},{h:'11. Tạm ngừng hoặc chấm dứt',p:'Nova có thể hạn chế hoặc chấm dứt quyền sử dụng khi phát hiện lạm dụng, vi phạm điều khoản hoặc yêu cầu từ Discord.'},{h:'12. Liên hệ',p:'Liên hệ <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a> cho câu hỏi về điều khoản.'}],contact:{icon:'↗',strong:'Support server',p:'discord.gg/qkyu3G6WMa',btn:'Tham gia ↗',href:'https://discord.gg/qkyu3G6WMa'}},en:{title:'Terms of Service',intro:'These terms are effective from <strong>19/09/2026</strong>. By inviting or using Nova, you agree to the following terms.',navLabels:{home:'Home',features:'Features',commands:'Commands',help:'Help',terms:'Terms',privacy:'Privacy'},sections:[{h:'1. Service description',p:'Nova provides AI, moderation, security, Ban Zone, War/Backup and Event tools for Discord communities.'},{h:'2. Acceptable use',p:"You must comply with Discord Terms of Service, Community Guidelines, applicable laws, and your server's rules."},{h:'3. Prohibited behavior',p:'Do not use Nova for spam, raids, permission abuse, harassment, illegal content, or attempts to damage the bot or servers.'},{h:'4. Moderation responsibility',p:'Server owners and admins are responsible for configuring moderation, security, whitelist, role hierarchy, and handling members.'},{h:'5. Custom prefix',p:'Prefixes are stored per server. Only users with Administrator, Manage Server, or Manage Channels should change the prefix and should notify members.'},{h:'6. AI content',p:'AI responses may be incorrect, incomplete, or inappropriate. Verify information before making decisions based on it.'},{h:'7. War, Backup and Events',p:'Users are responsible for invitations, content, and behavior in War, Backup, and Event sessions created by the server.'},{h:'8. Ban Zone',p:'Ban Zone is an automated tool that can ban or mute according to configuration. Set up whitelist, mode, and role hierarchy carefully.'},{h:'9. Availability',p:'Nova is provided as-is. Interruptions may occur due to maintenance, Discord limits, or dependent services.'},{h:'10. Service changes',p:'Nova may be updated, added to, modified, or have features removed. The update log will record significant changes.'},{h:'11. Suspension or termination',p:'Nova may limit or terminate usage rights when abuse, term violations, or Discord requirements are detected.'},{h:'12. Contact',p:'Contact <a href="mailto:anhbao27072011@gmail.com">anhbao27072011@gmail.com</a> for questions about the terms.'}],contact:{icon:'↗',strong:'Support server',p:'discord.gg/qkyu3G6WMa',btn:'Join ↗',href:'https://discord.gg/qkyu3G6WMa'}}}};
+function applyLegalLang(pageKey,lang){const data=LEGAL_COPY[pageKey]?.[lang];if(!data)return;[['.nav-link[href="index.html"]',data.navLabels.home],['.nav-link[href="index.html#features"]',data.navLabels.features],['.nav-link[href="index.html#commands"]',data.navLabels.commands],['.nav-link[href="index.html#help"]',data.navLabels.help],['.nav-link[href="terms-of-service.html"]',data.navLabels.terms],['.nav-link[href="privacy-policy.html"]',data.navLabels.privacy]].forEach(([sel,text])=>{const el=document.querySelector(sel);if(el)el.textContent=text});const doc=document.querySelector('.legal-doc');if(!doc)return;const h1=doc.querySelector('h1');const intro=doc.querySelector('.legal-intro');if(h1)h1.textContent=data.title;if(intro)intro.innerHTML=data.intro;doc.querySelectorAll('section').forEach(s=>s.remove());const contact=doc.querySelector('.contact-card');data.sections.forEach(({h,p})=>{const sec=document.createElement('section');const h2=document.createElement('h2');h2.textContent=h;const pp=document.createElement('p');pp.innerHTML=p;sec.append(h2,pp);if(contact)doc.insertBefore(sec,contact);else doc.appendChild(sec)});if(contact){const icon=contact.querySelector('.contact-icon');const strong=contact.querySelector('strong');const para=contact.querySelector('p');const btn=contact.querySelector('.btn');if(icon)icon.textContent=data.contact.icon;if(strong)strong.textContent=data.contact.strong;if(para)para.textContent=data.contact.p;if(btn){btn.textContent=data.contact.btn;btn.href=data.contact.href}}const fl=document.querySelector('.footer-bottom a[href="index.html"]');if(fl)fl.textContent=lang==='en'?'Home':'Trang chủ'}
+window.addEventListener('DOMContentLoaded',()=>{if(document.body.dataset.page!=='legal')return;const pageKey=location.pathname.includes('terms')?'terms':'privacy';const actions=document.querySelector('.nav-actions');if(!actions)return;let lang=localStorage.getItem('nova-lang')==='en'?'en':'vi';function applyLang(next){lang=next;localStorage.setItem('nova-lang',lang);document.documentElement.lang=lang;actions.querySelector('.language-switch')?.classList.toggle('en',lang==='en');actions.querySelectorAll('.lang-button').forEach(b=>{b.classList.toggle('active',b.dataset.lang===lang)});applyLegalLang(pageKey,lang)}applyLang(lang);actions.querySelectorAll('.lang-button').forEach(btn=>{btn.addEventListener('click',()=>applyLang(btn.dataset.lang))})});
